@@ -1,0 +1,136 @@
+[
+  {
+    "id": 1,
+    "name": "Storm Scooter Pro",
+    "slug": "storm-scooter-pro",
+    "price": 2499,
+    "image": "https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg",
+      "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg"
+    ],
+    "category": "scooter",
+    "description": "Scooter eléctrico de alta velocidad con autonomía de 60km y diseño deportivo",
+    "longDescription": "El Storm Scooter Pro representa la evolución de la movilidad urbana. Con su motor eléctrico de alta eficiencia y batería de litio de última generación, ofrece una experiencia de conducción suave y silenciosa. Perfecto para desplazamientos urbanos con estilo y responsabilidad ambiental.",
+    "specs": {
+      "Velocidad máxima": "45 km/h",
+      "Autonomía": "60 km",
+      "Tiempo de carga": "4-6 horas",
+      "Peso": "65 kg",
+      "Carga máxima": "120 kg",
+      "Motor": "3000W",
+      "Batería": "72V 20Ah Litio"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Lightning Bike X1",
+    "slug": "lightning-bike-x1",
+    "price": 4999,
+    "image": "https://images.pexels.com/photos/104842/bmw-vehicle-ride-bike-104842.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/104842/bmw-vehicle-ride-bike-104842.jpeg",
+      "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg"
+    ],
+    "category": "motorcycle",
+    "description": "Motocicleta eléctrica premium con tecnología avanzada y diseño futurista",
+    "longDescription": "La Lightning Bike X1 es nuestra motocicleta eléctrica más avanzada, diseñada para riders que buscan potencia, estilo y sostenibilidad. Con tecnología de punta y materiales premium, ofrece una experiencia de conducción incomparable.",
+    "specs": {
+      "Velocidad máxima": "120 km/h",
+      "Autonomía": "150 km",
+      "Tiempo de carga": "6-8 horas",
+      "Peso": "180 kg",
+      "Carga máxima": "200 kg",
+      "Motor": "8000W",
+      "Batería": "96V 40Ah Litio"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Urban Cruiser",
+    "slug": "urban-cruiser",
+    "price": 1899,
+    "image": "https://images.pexels.com/photos/2393816/pexels-photo-2393816.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/2393816/pexels-photo-2393816.jpeg"
+    ],
+    "category": "scooter",
+    "description": "Perfect para la ciudad, diseño elegante y eficiente para uso diario",
+    "longDescription": "El Urban Cruiser está diseñado específicamente para la vida urbana moderna. Su diseño compacto y elegante lo hace perfecto para navegar por las calles de la ciudad, mientras que su eficiencia energética garantiza un transporte económico y ecológico.",
+    "specs": {
+      "Velocidad máxima": "35 km/h",
+      "Autonomía": "45 km",
+      "Tiempo de carga": "3-4 horas",
+      "Peso": "55 kg",
+      "Carga máxima": "100 kg",
+      "Motor": "2000W",
+      "Batería": "60V 15Ah Litio"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Thunder Max",
+    "slug": "thunder-max",
+    "price": 6499,
+    "image": "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg"
+    ],
+    "category": "motorcycle",
+    "description": "La más potente de nuestra línea, diseñada para aventureros y entusiastas",
+    "longDescription": "Thunder Max es la culminación de nuestra ingeniería eléctrica. Diseñada para aquellos que no comprometen la potencia, ofrece una experiencia de conducción emocionante con la tranquilidad de la tecnología eléctrica más avanzada.",
+    "specs": {
+      "Velocidad máxima": "140 km/h",
+      "Autonomía": "200 km",
+      "Tiempo de carga": "8-10 horas",
+      "Peso": "220 kg",
+      "Carga máxima": "250 kg",
+      "Motor": "12000W",
+      "Batería": "120V 50Ah Litio"
+    }
+  },
+  {
+    "id": 5,
+    "name": "City Rider",
+    "slug": "city-rider",
+    "price": 1599,
+    "image": "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg"
+    ],
+    "category": "scooter",
+    "description": "Ideal para desplazamientos urbanos diarios, económico y confiable",
+    "longDescription": "City Rider es la opción perfecta para quienes buscan una solución de movilidad eléctrica accesible sin sacrificar calidad. Ideal para estudiantes y profesionales que necesitan un transporte confiable para sus actividades diarias.",
+    "specs": {
+      "Velocidad máxima": "30 km/h",
+      "Autonomía": "40 km",
+      "Tiempo de carga": "3-4 horas",
+      "Peso": "50 kg",
+      "Carga máxima": "90 kg",
+      "Motor": "1500W",
+      "Batería": "48V 12Ah Litio"
+    }
+  },
+  {
+    "id": 6,
+    "name": "Eco Sport",
+    "slug": "eco-sport",
+    "price": 3299,
+    "image": "https://images.pexels.com/photos/158063/belladonna-mountain-biker-bike-sport-158063.jpeg",
+    "gallery": [
+      "https://images.pexels.com/photos/158063/belladonna-mountain-biker-bike-sport-158063.jpeg"
+    ],
+    "category": "motorcycle",
+    "description": "Deportiva ecológica con diseño aerodinámico y tecnología inteligente",
+    "longDescription": "Eco Sport combina el rendimiento deportivo con la responsabilidad ambiental. Su diseño aerodinámico y tecnología inteligente la convierten en la elección perfecta para riders conscientes del medio ambiente.",
+    "specs": {
+      "Velocidad máxima": "90 km/h",
+      "Autonomía": "120 km",
+      "Tiempo de carga": "5-7 horas",
+      "Peso": "150 kg",
+      "Carga máxima": "180 kg",
+      "Motor": "6000W",
+      "Batería": "84V 30Ah Litio"
+    }
+  }
+]

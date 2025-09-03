@@ -4,10 +4,10 @@
     "name": "Storm Scooter Pro",
     "slug": "storm-scooter-pro",
     "price": 2499,
-    "image": "https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg",
+    "image": "/IMG/electric-scooter-1.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/3616956/pexels-photo-3616956.jpeg",
-      "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg"
+      "/IMG/electric-scooter-1.jpeg",
+      "/IMG/scooter-electrico-1.jpeg"
     ],
     "category": "scooter",
     "description": "Scooter eléctrico de alta velocidad con autonomía de 60km y diseño deportivo",
@@ -27,10 +27,10 @@
     "name": "Lightning Bike X1",
     "slug": "lightning-bike-x1",
     "price": 4999,
-    "image": "https://images.pexels.com/photos/104842/bmw-vehicle-ride-bike-104842.jpeg",
+    "image": "/IMG/scooter-electrico-2.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/104842/bmw-vehicle-ride-bike-104842.jpeg",
-      "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg"
+      "/IMG/scooter-electrico-2.jpeg",
+      "/IMG/scooter-electrico-3.jpeg"
     ],
     "category": "motorcycle",
     "description": "Motocicleta eléctrica premium con tecnología avanzada y diseño futurista",
@@ -50,9 +50,9 @@
     "name": "Urban Cruiser",
     "slug": "urban-cruiser",
     "price": 1899,
-    "image": "https://images.pexels.com/photos/2393816/pexels-photo-2393816.jpeg",
+    "image": "/IMG/scooter-electrico-1.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/2393816/pexels-photo-2393816.jpeg"
+      "/IMG/scooter-electrico-1.jpeg"
     ],
     "category": "scooter",
     "description": "Perfect para la ciudad, diseño elegante y eficiente para uso diario",
@@ -72,9 +72,10 @@
     "name": "Thunder Max",
     "slug": "thunder-max",
     "price": 6499,
-    "image": "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg",
+    "image": "/IMG/scooter-electrico-3.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/2116475/pexels-photo-2116475.jpeg"
+      "/IMG/scooter-electrico-3.jpeg",
+      "/IMG/scooter-electrico-2.jpeg"
     ],
     "category": "motorcycle",
     "description": "La más potente de nuestra línea, diseñada para aventureros y entusiastas",
@@ -94,9 +95,9 @@
     "name": "City Rider",
     "slug": "city-rider",
     "price": 1599,
-    "image": "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg",
+    "image": "/IMG/scooter-electrico-1.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg"
+      "/IMG/scooter-electrico-1.jpeg"
     ],
     "category": "scooter",
     "description": "Ideal para desplazamientos urbanos diarios, económico y confiable",
@@ -116,9 +117,9 @@
     "name": "Eco Sport",
     "slug": "eco-sport",
     "price": 3299,
-    "image": "https://images.pexels.com/photos/158063/belladonna-mountain-biker-bike-sport-158063.jpeg",
+    "image": "/IMG/scooter-electrico-3.jpeg",
     "gallery": [
-      "https://images.pexels.com/photos/158063/belladonna-mountain-biker-bike-sport-158063.jpeg"
+      "/IMG/scooter-electrico-3.jpeg"
     ],
     "category": "motorcycle",
     "description": "Deportiva ecológica con diseño aerodinámico y tecnología inteligente",

@@ -1,130 +1,109 @@
-exports.handler = async (event, context) => {
-  // CORS headers
+// netlify/functions/affirm-create-checkout.js
+exports.handler = async (event) => {
+  // CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
-  // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
+    return { statusCode: 200, headers, body: '' };
   }
-
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
-    const { items, total, currency, merchant, shipping, billing } = JSON.parse(event.body);
+    const body = JSON.parse(event.body || '{}');
+    const { items, total, currency = 'USD', merchant = {}, shipping = {}, billing = {} } = body;
 
-    // Validate required environment variables
-    const isProduction = process.env.AFFIRM_ENV === 'prod';
-    const publicKey = isProduction ? process.env.AFFIRM_PUBLIC_KEY : process.env.AFFIRM_PUBLIC_KEY_SANDBOX;
-    const privateKey = isProduction ? process.env.AFFIRM_PRIVATE_KEY : process.env.AFFIRM_PRIVATE_KEY_SANDBOX;
+    // Validaciones mínimas
+    if (!Array.isArray(items) || items.length === 0) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Items are required' }) };
+    }
+    if (!Number.isInteger(total)) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Total must be an integer amount in cents' }) };
+    }
+
+    // Entorno y credenciales
+    const env = String(process.env.AFFIRM_ENV || 'sandbox').toLowerCase();
+    const isProd = env === 'prod' || env === 'production';
+
+    // Usa las que ya cargaste en Netlify; si existieran *_SANDBOX también las toma como fallback
+    const publicKey  = process.env.AFFIRM_PUBLIC_KEY  || process.env.AFFIRM_PUBLIC_KEY_SANDBOX;
+    const privateKey = process.env.AFFIRM_PRIVATE_KEY || process.env.AFFIRM_PRIVATE_KEY_SANDBOX;
 
     if (!publicKey || !privateKey) {
       console.error('Missing Affirm credentials');
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Server configuration error' })
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server configuration error' }) };
     }
 
-    // Affirm API endpoint
-    const affirmApiUrl = isProduction 
-      ? 'https://api.affirm.com/api/v2/checkout'
-      : 'https://sandbox.affirm.com/api/v2/checkout';
+    const base = isProd ? 'https://api.affirm.com/api/v2' : 'https://sandbox.affirm.com/api/v2';
 
-    // Prepare checkout payload
+    const orderId = `SS-${Date.now()}`;
     const checkoutPayload = {
       merchant: {
         user_confirmation_url: merchant.user_confirmation_url,
         user_cancel_url: merchant.user_cancel_url,
-        user_confirmation_url_action: 'GET',
-        name: merchant.name || 'Sunrise Store'
+        user_confirmation_url_action: 'GET', // o 'POST' si preferís recibir POST back
+        name: merchant.name || 'Sunrise Store',
       },
-      shipping: {
-        name: shipping.name,
-        address: shipping.address
-      },
-      billing: {
-        name: billing.name,
-        address: billing.address
-      },
-      items: items.map(item => ({
-        display_name: item.display_name,
-        sku: item.sku,
-        unit_price: item.unit_price,
-        qty: item.qty,
-        item_image_url: item.item_image_url,
-        item_url: item.item_url
+      shipping: { name: shipping.name, address: shipping.address },
+      billing:  { name: billing.name,  address: billing.address },
+      items: items.map((it) => ({
+        display_name: it.display_name,
+        sku: it.sku,
+        unit_price: it.unit_price, // en cents
+        qty: it.qty,
+        item_image_url: it.item_image_url,
+        item_url: it.item_url,
       })),
       discounts: {},
-      metadata: {
-        platform: 'sunrise-store',
-        order_id: `SS-${Date.now()}`
-      },
-      order_id: `SS-${Date.now()}`,
-      currency: currency || 'USD',
+      metadata: { platform: 'sunrise-store', order_id: orderId },
+      order_id: orderId,
+      currency,
       tax_amount: 0,
       shipping_amount: 0,
-      total: total
+      total, // en cents (entero)
     };
 
-    // Create checkout with Affirm
-    const response = await fetch(affirmApiUrl, {
+    const res = await fetch(`${base}/checkout/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Buffer.from(`${publicKey}:${privateKey}`).toString('base64')}`
+        Authorization: `Basic ${Buffer.from(`${publicKey}:${privateKey}`).toString('base64')}`,
       },
-      body: JSON.stringify(checkoutPayload)
+      body: JSON.stringify(checkoutPayload),
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('Affirm API error:', response.status, errorData);
+    if (!res.ok) {
+      const txt = await res.text();
+      console.error('Affirm API error:', res.status, txt);
       return {
-        statusCode: response.status,
+        statusCode: res.status,
         headers,
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           error: 'Failed to create checkout',
-          details: response.status >= 500 ? 'Service temporarily unavailable' : 'Invalid request'
-        })
+          details: res.status >= 500 ? 'Service temporarily unavailable' : 'Invalid request',
+        }),
       };
     }
 
-    const checkoutData = await response.json();
-
+    const data = await res.json();
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        checkout_token: checkoutData.checkout_token,
-        order_id: checkoutPayload.order_id
-      })
+        checkout_token: data.checkout_token,
+        redirect_url: data.redirect_url, // útil si querés redirigir en lugar de abrir modal
+        order_id: orderId,
+      }),
     };
-
-  } catch (error) {
-    console.error('Checkout creation error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        message: 'Unable to process checkout request'
-      })
-    };
+  } catch (err) {
+    const message = err && typeof err === 'object' && 'message' in err ? err.message : String(err);
+    console.error('Checkout creation error:', message);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error', message }) };
   }
 };

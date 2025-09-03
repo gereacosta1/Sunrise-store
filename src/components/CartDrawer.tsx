@@ -39,7 +39,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
-    
+
     try {
       // Prepare checkout data for Affirm
       const checkoutData = {
@@ -60,10 +60,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           name: 'Sunrise Store'
         },
         shipping: {
-          name: {
-            first: 'Customer',
-            last: 'Name'
-          },
+          name: { first: 'Customer', last: 'Name' },
           address: {
             line1: '123 Main St',
             city: 'Anytown',
@@ -73,10 +70,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           }
         },
         billing: {
-          name: {
-            first: 'Customer',
-            last: 'Name'
-          },
+          name: { first: 'Customer', last: 'Name' },
           address: {
             line1: '123 Main St',
             city: 'Anytown',
@@ -89,9 +83,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
       const response = await fetch('/.netlify/functions/affirm-create-checkout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(checkoutData)
       });
 
@@ -100,13 +92,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       }
 
       const { checkout_token } = await response.json();
-      
+
       // Load Affirm script and open checkout
       const script = document.createElement('script');
-      script.src = process.env.NODE_ENV === 'production' 
-        ? 'https://cdn1.affirm.com/js/v2/affirm.js'
-        : 'https://cdn1-sandbox.affirm.com/js/v2/affirm.js';
-      
+      script.src =
+        process.env.NODE_ENV === 'production'
+          ? 'https://cdn1.affirm.com/js/v2/affirm.js'
+          : 'https://cdn1-sandbox.affirm.com/js/v2/affirm.js';
+
       script.onload = () => {
         // @ts-ignore
         affirm.ui.ready(() => {
@@ -114,12 +107,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           affirm.checkout(checkout_token);
         });
       };
-      
+
       document.head.appendChild(script);
-      
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Error al procesar el checkout. Por favor intenta nuevamente.');
+      alert('Error processing checkout. Please try again.');
     }
   };
 
@@ -128,26 +120,23 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300"
-        onClick={onClose}
-      />
-      
+      <div className="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300" onClick={onClose} />
+
       {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform transition-transform duration-300 flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 
+          <h2
             ref={titleRef}
             className="text-2xl font-bold text-gray-900 focus:outline-none"
             tabIndex={-1}
           >
-            Carrito de Compras
+            Shopping Cart
           </h2>
           <button
             onClick={onClose}
             className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
-            aria-label="Cerrar carrito"
+            aria-label="Close cart"
           >
             <X className="h-6 w-6" />
           </button>
@@ -158,18 +147,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           {items.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingBag className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">Tu carrito está vacío</p>
-              <p className="text-gray-400 text-sm mt-2">Agrega algunos productos para comenzar</p>
+              <p className="text-gray-500 text-lg">Your cart is empty</p>
+              <p className="text-gray-400 text-sm mt-2">Add some products to get started</p>
             </div>
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
                 <div key={item.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-xl">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />
+                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
                     <p className="text-orange-500 font-bold">${item.price.toLocaleString()}</p>
@@ -178,7 +163,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       className="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
-                      aria-label="Disminuir cantidad"
+                      aria-label="Decrease quantity"
                     >
                       <Minus className="h-4 w-4" />
                     </button>
@@ -186,7 +171,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
                       className="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
-                      aria-label="Aumentar cantidad"
+                      aria-label="Increase quantity"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -194,7 +179,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                   <button
                     onClick={() => removeItem(item.id)}
                     className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
-                    aria-label="Eliminar producto"
+                    aria-label="Remove item"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -216,13 +201,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 onClick={handleCheckout}
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               >
-                Finalizar compra
+                Checkout
               </button>
               <button
                 onClick={clearCart}
                 className="w-full text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md py-2"
               >
-                Vaciar carrito
+                Clear cart
               </button>
             </div>
           </div>

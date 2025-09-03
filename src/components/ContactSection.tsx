@@ -152,7 +152,7 @@ const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold">Teléfono</h4>
-                    <p className="text-orange-100">+1 (555) 123-4567</p>
+                    <p className="text-orange-100">305-833-0092</p>
                   </div>
                 </div>
 
@@ -162,8 +162,8 @@ const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold">Dirección</h4>
-                    <p className="text-orange-100">123 Electric Avenue</p>
-                    <p className="text-orange-100">Tech City, TC 12345</p>
+                    <p className="text-orange-100">11510 Biscayne Blvd, Miami, FL 33181</p>
+                    <p className="text-orange-100">Sunrise Store</p>
                   </div>
                 </div>
               </div>

@@ -13,21 +13,19 @@ const CheckoutCanceled: React.FC = () => {
           </div>
 
           {/* Cancel Message */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Checkout Cancelado
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Checkout canceled</h1>
           <p className="text-xl text-gray-600 mb-8">
-            No se procesó ningún pago. Tus productos siguen en el carrito esperándote.
+            No payment was processed. Your items are still in the cart waiting for you.
           </p>
 
           {/* Information */}
           <div className="bg-gray-50 rounded-2xl p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">¿Qué pasó?</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">What happened?</h2>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>• El proceso de pago fue cancelado</p>
-              <p>• No se realizó ningún cargo a tu cuenta</p>
-              <p>• Tus productos permanecen en el carrito</p>
-              <p>• Puedes intentar nuevamente cuando gustes</p>
+              <p>• The payment process was canceled</p>
+              <p>• No charges were made to your account</p>
+              <p>• Your products remain in the cart</p>
+              <p>• You can try again whenever you like</p>
             </div>
           </div>
 
@@ -39,19 +37,19 @@ const CheckoutCanceled: React.FC = () => {
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span>Continuar comprando</span>
+                <span>Continue shopping</span>
               </Link>
-              
+
               <Link
-                to="/contacto"
+                to="/contacto" /* keep existing route anchor */
                 className="inline-flex items-center space-x-2 border-2 border-orange-500 text-orange-500 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-orange-500 hover:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               >
-                <span>¿Necesitas ayuda?</span>
+                <span>Need help?</span>
               </Link>
             </div>
-            
+
             <p className="text-gray-500 text-sm">
-              Si tienes problemas con el proceso de pago, no dudes en contactarnos
+              If you’re having issues with the payment process, feel free to contact us.
             </p>
           </div>
         </div>

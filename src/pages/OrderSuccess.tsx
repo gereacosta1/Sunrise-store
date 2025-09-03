@@ -24,28 +24,28 @@ const OrderSuccess: React.FC = () => {
 
           {/* Success Message */}
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            ¡Orden Exitosa!
+            Order Successful!
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Tu compra ha sido procesada correctamente. Recibirás un email de confirmación en breve.
+            Your purchase was processed successfully. You’ll receive a confirmation email shortly.
           </p>
 
           {/* Order Details */}
           {chargeId && (
             <div className="bg-gray-50 rounded-2xl p-6 mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Detalles de la orden</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Order details</h2>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">ID de transacción:</span>
+                  <span className="text-gray-600">Transaction ID:</span>
                   <span className="font-mono text-gray-900">{chargeId}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Método de pago:</span>
+                  <span className="text-gray-600">Payment method:</span>
                   <span className="text-gray-900">Affirm</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Estado:</span>
-                  <span className="text-green-600 font-medium">Confirmado</span>
+                  <span className="text-gray-600">Status:</span>
+                  <span className="text-green-600 font-medium">Confirmed</span>
                 </div>
               </div>
             </div>
@@ -55,17 +55,17 @@ const OrderSuccess: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div className="bg-orange-50 p-6 rounded-2xl">
               <Package className="h-8 w-8 text-orange-500 mx-auto mb-4" />
-              <h3 className="font-semibold text-gray-900 mb-2">Preparación del envío</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Preparing shipment</h3>
               <p className="text-gray-600 text-sm">
-                Tu pedido será preparado y enviado en las próximas 24-48 horas.
+                Your order will be prepared and shipped within 24–48 hours.
               </p>
             </div>
-            
+
             <div className="bg-orange-50 p-6 rounded-2xl">
               <CreditCard className="h-8 w-8 text-orange-500 mx-auto mb-4" />
-              <h3 className="font-semibold text-gray-900 mb-2">Pagos con Affirm</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Affirm payments</h3>
               <p className="text-gray-600 text-sm">
-                Recibirás información sobre tus cuotas mensuales por email.
+                You’ll receive your monthly installment information by email.
               </p>
             </div>
           </div>
@@ -77,11 +77,14 @@ const OrderSuccess: React.FC = () => {
               className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             >
               <Home className="h-5 w-5" />
-              <span>Volver al inicio</span>
+              <span>Back to home</span>
             </Link>
-            
+
             <p className="text-gray-500 text-sm">
-              ¿Tienes preguntas? <Link to="/contacto" className="text-orange-500 hover:text-orange-600 underline">Contáctanos</Link>
+              Have questions?{' '}
+              <Link to="/contacto" className="text-orange-500 hover:text-orange-600 underline">
+                Contact us
+              </Link>
             </p>
           </div>
         </div>

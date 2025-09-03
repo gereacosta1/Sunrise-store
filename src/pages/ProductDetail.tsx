@@ -18,12 +18,12 @@ const ProductDetail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Producto no encontrado</h1>
-          <Link 
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product not found</h1>
+          <Link
             to="/"
             className="text-orange-500 hover:text-orange-600 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 rounded px-2 py-1"
           >
-            Volver al inicio
+            Back to home
           </Link>
         </div>
       </div>
@@ -43,11 +43,11 @@ const ProductDetail: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link 
+          <Link
             to="/"
             className="hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded px-1"
           >
-            Inicio
+            Home
           </Link>
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
@@ -59,7 +59,7 @@ const ProductDetail: React.FC = () => {
           className="inline-flex items-center space-x-2 text-orange-500 hover:text-orange-600 transition-colors duration-200 mb-8 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded px-2 py-1"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Volver al catálogo</span>
+          <span>Back to catalog</span>
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-12">
@@ -72,7 +72,7 @@ const ProductDetail: React.FC = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            
+
             {images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
                 {images.map((image, index) => (
@@ -80,14 +80,15 @@ const ProductDetail: React.FC = () => {
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={`aspect-square overflow-hidden rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      selectedImage === index 
-                        ? 'border-orange-500' 
+                      selectedImage === index
+                        ? 'border-orange-500'
                         : 'border-gray-200 hover:border-orange-300'
                     }`}
+                    aria-label={`Select image ${index + 1}`}
                   >
                     <img
                       src={image}
-                      alt={`${product.name} vista ${index + 1}`}
+                      alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -100,12 +101,14 @@ const ProductDetail: React.FC = () => {
           <div className="space-y-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  product.category === 'scooter' 
-                    ? 'bg-orange-100 text-orange-600' 
-                    : 'bg-orange-200 text-orange-700'
-                }`}>
-                  {product.category === 'scooter' ? 'Scooter' : 'Motocicleta'}
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    product.category === 'scooter'
+                      ? 'bg-orange-100 text-orange-600'
+                      : 'bg-orange-200 text-orange-700'
+                  }`}
+                >
+                  {product.category === 'scooter' ? 'Scooter' : 'Motorcycle'}
                 </span>
                 <div className="flex items-center space-x-1">
                   {[...Array(5)].map((_, i) => (
@@ -127,13 +130,13 @@ const ProductDetail: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <label htmlFor="quantity" className="font-medium text-gray-900">
-                  Cantidad:
+                  Quantity:
                 </label>
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="p-2 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    aria-label="Disminuir cantidad"
+                    aria-label="Decrease quantity"
                   >
                     -
                   </button>
@@ -148,7 +151,7 @@ const ProductDetail: React.FC = () => {
                   <button
                     onClick={() => setQuantity(quantity + 1)}
                     className="p-2 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    aria-label="Aumentar cantidad"
+                    aria-label="Increase quantity"
                   >
                     +
                   </button>
@@ -164,7 +167,7 @@ const ProductDetail: React.FC = () => {
                 }`}
               >
                 <ShoppingCart className="h-6 w-6" />
-                <span>{addedToCart ? '¡Agregado al carrito!' : 'Agregar al carrito'}</span>
+                <span>{addedToCart ? 'Added to cart!' : 'Add to cart'}</span>
               </button>
             </div>
 
@@ -175,19 +178,22 @@ const ProductDetail: React.FC = () => {
                   onClick={() => setIsSpecsOpen(!isSpecsOpen)}
                   className="w-full flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900">Especificaciones Técnicas</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Technical Specifications</h3>
                   {isSpecsOpen ? (
                     <ChevronUp className="h-5 w-5 text-gray-500" />
                   ) : (
                     <ChevronDown className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
-                
+
                 {isSpecsOpen && (
                   <div className="p-6 bg-white">
                     <dl className="grid grid-cols-1 gap-4">
                       {Object.entries(product.specs).map(([key, value]) => (
-                        <div key={key} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                        <div
+                          key={key}
+                          className="flex justify-between py-2 border-b border-gray-100 last:border-0"
+                        >
                           <dt className="font-medium text-gray-900">{key}:</dt>
                           <dd className="text-gray-600">{value}</dd>
                         </div>

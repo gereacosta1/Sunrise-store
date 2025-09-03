@@ -13,18 +13,14 @@ const Header: React.FC = () => {
   const totalItems = getTotalItems();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleNavClick = (href: string, e: React.MouseEvent) => {
@@ -40,17 +36,20 @@ const Header: React.FC = () => {
   };
 
   const navigation = [
-    { name: 'Inicio', href: '/' },
-    { name: 'Catálogo', href: '#catalog' },
-    { name: 'Financiamiento', href: '#financing' },
-    { name: 'Contacto', href: '#contacto' },
+    { label: 'Home', href: '/' },
+    { label: 'Catalog', href: '#catalog' },
+    { label: 'Financing', href: '#financing' },
+    // Mantengo el id existente para no romper el scroll:
+    { label: 'Contact', href: '#contacto' },
   ];
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
-      }`}>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -65,34 +64,34 @@ const Header: React.FC = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
-              {navigation.map((item) => (
+              {navigation.map((item) =>
                 item.href.startsWith('#') ? (
                   <button
-                    key={item.name}
+                    key={item.label}
                     onClick={(e) => handleNavClick(item.href, e)}
                     className="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md px-2 py-1"
-                    aria-label={item.name === 'Contacto' ? 'Ir a contacto' : `Ir a ${item.name.toLowerCase()}`}
+                    aria-label={`Go to ${item.label.toLowerCase()}`}
                   >
-                    {item.name}
+                    {item.label}
                   </button>
                 ) : (
                   <Link
-                    key={item.name}
+                    key={item.label}
                     to={item.href}
                     className="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md px-2 py-1"
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 )
-              ))}
+              )}
             </nav>
 
             {/* Cart & Mobile Menu */}
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={() => setIsCartOpen(true)}
                 className="relative p-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
-                aria-label="Abrir carrito de compras"
+                aria-label="Open shopping cart"
               >
                 <ShoppingCart className="h-6 w-6" />
                 {totalItems > 0 && (
@@ -106,7 +105,7 @@ const Header: React.FC = () => {
               <button
                 className="md:hidden p-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label="Abrir menú de navegación"
+                aria-label="Open navigation menu"
               >
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -117,33 +116,33 @@ const Header: React.FC = () => {
           {isMenuOpen && (
             <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t">
               <nav className="px-4 py-4 space-y-2">
-                {navigation.map((item) => (
+                {navigation.map((item) =>
                   item.href.startsWith('#') ? (
                     <button
-                      key={item.name}
+                      key={item.label}
                       onClick={(e) => handleNavClick(item.href, e)}
                       className="block w-full text-left py-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
-                      aria-label={item.name === 'Contacto' ? 'Ir a contacto' : `Ir a ${item.name.toLowerCase()}`}
+                      aria-label={`Go to ${item.label.toLowerCase()}`}
                     >
-                      {item.name}
+                      {item.label}
                     </button>
                   ) : (
                     <Link
-                      key={item.name}
+                      key={item.label}
                       to={item.href}
                       className="block py-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {item.name}
+                      {item.label}
                     </Link>
                   )
-                ))}
+                )}
               </nav>
             </div>
           )}
         </div>
       </header>
-      
+
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

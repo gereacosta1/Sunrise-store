@@ -3,135 +3,267 @@
     "id": 1,
     "name": "Storm Scooter Pro",
     "slug": "storm-scooter-pro",
-    "price": 2499,
+    "price": 1850,
     "image": "/IMG/electric-scooter-1.jpeg",
     "gallery": [
       "/IMG/electric-scooter-1.jpeg",
       "/IMG/scooter-electrico-1.jpeg"
     ],
     "category": "scooter",
-    "description": "Scooter eléctrico de alta velocidad con autonomía de 60km y diseño deportivo",
-    "longDescription": "El Storm Scooter Pro representa la evolución de la movilidad urbana. Con su motor eléctrico de alta eficiencia y batería de litio de última generación, ofrece una experiencia de conducción suave y silenciosa. Perfecto para desplazamientos urbanos con estilo y responsabilidad ambiental.",
+    "description": "High-speed electric scooter with a 60 km range and a sporty design.",
+    "longDescription": "Storm Scooter Pro represents the evolution of urban mobility. With a high-efficiency electric motor and next-gen lithium battery, it delivers a smooth and quiet ride—perfect for city commuting with style and environmental responsibility.",
     "specs": {
-      "Velocidad máxima": "45 km/h",
-      "Autonomía": "60 km",
-      "Tiempo de carga": "4-6 horas",
-      "Peso": "65 kg",
-      "Carga máxima": "120 kg",
+      "Max speed": "45 km/h",
+      "Range": "60 km",
+      "Charging time": "4–6 hours",
+      "Weight": "65 kg",
+      "Max load": "120 kg",
       "Motor": "3000W",
-      "Batería": "72V 20Ah Litio"
+      "Battery": "72V 20Ah Lithium"
     }
   },
   {
     "id": 2,
     "name": "Lightning Bike X1",
     "slug": "lightning-bike-x1",
-    "price": 4999,
+    "price": 1650,
     "image": "/IMG/scooter-electrico-2.jpeg",
     "gallery": [
       "/IMG/scooter-electrico-2.jpeg",
       "/IMG/scooter-electrico-3.jpeg"
     ],
     "category": "motorcycle",
-    "description": "Motocicleta eléctrica premium con tecnología avanzada y diseño futurista",
-    "longDescription": "La Lightning Bike X1 es nuestra motocicleta eléctrica más avanzada, diseñada para riders que buscan potencia, estilo y sostenibilidad. Con tecnología de punta y materiales premium, ofrece una experiencia de conducción incomparable.",
+    "description": "Premium electric motorcycle with advanced technology and futuristic design.",
+    "longDescription": "Lightning Bike X1 is our most advanced electric motorcycle—built for riders who want power, style, and sustainability. With cutting-edge tech and premium materials, it delivers an unmatched riding experience.",
     "specs": {
-      "Velocidad máxima": "120 km/h",
-      "Autonomía": "150 km",
-      "Tiempo de carga": "6-8 horas",
-      "Peso": "180 kg",
-      "Carga máxima": "200 kg",
+      "Max speed": "120 km/h",
+      "Range": "150 km",
+      "Charging time": "6–8 hours",
+      "Weight": "180 kg",
+      "Max load": "200 kg",
       "Motor": "8000W",
-      "Batería": "96V 40Ah Litio"
+      "Battery": "96V 40Ah Lithium"
     }
   },
   {
     "id": 3,
     "name": "Urban Cruiser",
     "slug": "urban-cruiser",
-    "price": 1899,
+    "price": 1500,
     "image": "/IMG/scooter-electrico-1.jpeg",
     "gallery": [
       "/IMG/scooter-electrico-1.jpeg"
     ],
     "category": "scooter",
-    "description": "Perfect para la ciudad, diseño elegante y eficiente para uso diario",
-    "longDescription": "El Urban Cruiser está diseñado específicamente para la vida urbana moderna. Su diseño compacto y elegante lo hace perfecto para navegar por las calles de la ciudad, mientras que su eficiencia energética garantiza un transporte económico y ecológico.",
+    "description": "Perfect for the city—elegant, efficient design for everyday use.",
+    "longDescription": "Urban Cruiser is designed for modern city life. Its compact, stylish form makes it ideal for navigating city streets, while its energy efficiency ensures economical, eco-friendly transport.",
     "specs": {
-      "Velocidad máxima": "35 km/h",
-      "Autonomía": "45 km",
-      "Tiempo de carga": "3-4 horas",
-      "Peso": "55 kg",
-      "Carga máxima": "100 kg",
+      "Max speed": "35 km/h",
+      "Range": "45 km",
+      "Charging time": "3–4 hours",
+      "Weight": "55 kg",
+      "Max load": "100 kg",
       "Motor": "2000W",
-      "Batería": "60V 15Ah Litio"
+      "Battery": "60V 15Ah Lithium"
     }
   },
   {
     "id": 4,
     "name": "Thunder Max",
     "slug": "thunder-max",
-    "price": 6499,
+    "price": 2000,
     "image": "/IMG/scooter-electrico-3.jpeg",
     "gallery": [
       "/IMG/scooter-electrico-3.jpeg",
-      "/IMG/scooter-electrico-2.jpeg"
+      "/IMG/scooter-electrico-3.jpeg"
     ],
     "category": "motorcycle",
-    "description": "La más potente de nuestra línea, diseñada para aventureros y entusiastas",
-    "longDescription": "Thunder Max es la culminación de nuestra ingeniería eléctrica. Diseñada para aquellos que no comprometen la potencia, ofrece una experiencia de conducción emocionante con la tranquilidad de la tecnología eléctrica más avanzada.",
+    "description": "The most powerful in our lineup—built for enthusiasts and adventurers.",
+    "longDescription": "Thunder Max is the culmination of our electric engineering. Made for those who won’t compromise on power, it offers a thrilling ride with the assurance of the latest electric technology.",
     "specs": {
-      "Velocidad máxima": "140 km/h",
-      "Autonomía": "200 km",
-      "Tiempo de carga": "8-10 horas",
-      "Peso": "220 kg",
-      "Carga máxima": "250 kg",
+      "Max speed": "140 km/h",
+      "Range": "200 km",
+      "Charging time": "8–10 hours",
+      "Weight": "220 kg",
+      "Max load": "250 kg",
       "Motor": "12000W",
-      "Batería": "120V 50Ah Litio"
+      "Battery": "120V 50Ah Lithium"
     }
   },
   {
     "id": 5,
     "name": "City Rider",
     "slug": "city-rider",
-    "price": 1599,
-    "image": "/IMG/scooter-electrico-1.jpeg",
+    "price": 3500,
+    "image": "/IMG/bici-electric-negra.jpeg",
     "gallery": [
-      "/IMG/scooter-electrico-1.jpeg"
+      "/IMG/bici-electric-negra.jpeg"
     ],
     "category": "scooter",
-    "description": "Ideal para desplazamientos urbanos diarios, económico y confiable",
-    "longDescription": "City Rider es la opción perfecta para quienes buscan una solución de movilidad eléctrica accesible sin sacrificar calidad. Ideal para estudiantes y profesionales que necesitan un transporte confiable para sus actividades diarias.",
+    "description": "Ideal for daily urban commutes—affordable and reliable.",
+    "longDescription": "City Rider is the perfect choice for those seeking accessible electric mobility without sacrificing quality. Great for students and professionals who need dependable daily transport.",
     "specs": {
-      "Velocidad máxima": "30 km/h",
-      "Autonomía": "40 km",
-      "Tiempo de carga": "3-4 horas",
-      "Peso": "50 kg",
-      "Carga máxima": "90 kg",
+      "Max speed": "30 km/h",
+      "Range": "40 km",
+      "Charging time": "3–4 hours",
+      "Weight": "50 kg",
+      "Max load": "90 kg",
       "Motor": "1500W",
-      "Batería": "48V 12Ah Litio"
+      "Battery": "48V 12Ah Lithium"
     }
   },
   {
     "id": 6,
     "name": "Eco Sport",
     "slug": "eco-sport",
-    "price": 3299,
-    "image": "/IMG/scooter-electrico-3.jpeg",
+    "price": 1200,
+    "image": "/IMG/electricBike.jpeg",
     "gallery": [
-      "/IMG/scooter-electrico-3.jpeg"
+      "/IMG/electricBike2.jpeg"
     ],
     "category": "motorcycle",
-    "description": "Deportiva ecológica con diseño aerodinámico y tecnología inteligente",
-    "longDescription": "Eco Sport combina el rendimiento deportivo con la responsabilidad ambiental. Su diseño aerodinámico y tecnología inteligente la convierten en la elección perfecta para riders conscientes del medio ambiente.",
+    "description": "Eco-friendly sport design with smart technology and aerodynamic build.",
+    "longDescription": "Eco Sport combines sporty performance with environmental responsibility. Its aerodynamic design and intelligent tech make it the perfect choice for eco-conscious riders.",
     "specs": {
-      "Velocidad máxima": "90 km/h",
-      "Autonomía": "120 km",
-      "Tiempo de carga": "5-7 horas",
-      "Peso": "150 kg",
-      "Carga máxima": "180 kg",
+      "Max speed": "90 km/h",
+      "Range": "120 km",
+      "Charging time": "5–7 hours",
+      "Weight": "150 kg",
+      "Max load": "180 kg",
       "Motor": "6000W",
-      "Batería": "84V 30Ah Litio"
+      "Battery": "84V 30Ah Lithium"
+    }
+  },
+  {
+    "id": 7,
+    "name": "JBL Flip Speaker",
+    "slug": "parlante-jbl-flip",
+    "price": 400,
+    "image": "/IMG/parlanteJBL.jpeg",
+    "gallery": [
+      "/IMG/parlanteJBL.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Portable Bluetooth speaker with powerful sound—great for indoors and outdoors.",
+    "longDescription": "Compact, rugged, and ready to go. The JBL Flip delivers clear, punchy audio in a portable form factor. Perfect for daily use and weekend trips.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
+    }
+  },
+  {
+    "id": 8,
+    "name": "JBL GO Speaker",
+    "slug": "parlante-jbl-go",
+    "price": 350,
+    "image": "/IMG/parlanteJBL2.jpeg",
+    "gallery": [
+      "/IMG/parlanteJBL2.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Ultra-portable Bluetooth speaker for music on the go.",
+    "longDescription": "Small size, big sound. JBL GO is designed to travel light and play loud—your pocket-size music companion.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
+    }
+  },
+  {
+    "id": 9,
+    "name": "JBL Speaker",
+    "slug": "parlante-jbl",
+    "price": 300,
+    "image": "/IMG/parlanteJBL3.jpeg",
+    "gallery": [
+      "/IMG/parlanteJBL3.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Versatile Bluetooth speaker with clear sound and easy pairing.",
+    "longDescription": "Enjoy your playlists anywhere. Reliable connectivity and quality audio for everyday listening.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
+    }
+  },
+  {
+    "id": 10,
+    "name": "Wheels & Tires",
+    "slug": "ruedas-neumaticos",
+    "price": 80,
+    "image": "/IMG/ruedas.jpeg",
+    "gallery": [
+      "/IMG/ruedas.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Durable replacement wheels and tires for your scooter.",
+    "longDescription": "Ride with confidence—fresh wheels and tires help you maintain traction, comfort, and safety on every trip.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
+    }
+  },
+  {
+    "id": 11,
+    "name": "Wheels & Tires",
+    "slug": "ruedas-neumaticos-2",
+    "price": 110,
+    "image": "/IMG/ruedas2.jpeg",
+    "gallery": [
+      "/IMG/ruedas2.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Heavy-duty wheels and tires for extra durability.",
+    "longDescription": "A tougher option for rougher surfaces or heavier daily usage—keep your scooter performing at its best.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
+    }
+  },
+  {
+    "id": 12,
+    "name": "Electric Scooter Pro",
+    "slug": "electric-scooter-pro",
+    "price": 1000,
+    "image": "/IMG/electricBike3.jpeg",
+    "gallery": [
+      "/IMG/electricBike3.jpeg"
+    ],
+    "category": "Speaker",
+    "description": "Balanced performance and comfort for everyday rides.",
+    "longDescription": "A reliable electric scooter for commuting or leisure. Easy to ride, comfortable and efficient.",
+    "specs": {
+      "Max speed": "-",
+      "Range": "-",
+      "Charging time": "-",
+      "Weight": "-",
+      "Max load": "-",
+      "Motor": "-",
+      "Battery": "-"
     }
   }
 ]

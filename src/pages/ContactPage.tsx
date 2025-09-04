@@ -15,18 +15,20 @@ const ContactPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     setSubmitted(true);
     setIsSubmitting(false);
     setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    
+
     setTimeout(() => setSubmitted(false), 3000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -39,21 +41,23 @@ const ContactPage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Contáctanos
+            Contact us
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            ¿Tienes preguntas sobre nuestros productos? Estamos aquí para ayudarte
+            Have questions about our products? We’re here to help.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <div className="bg-white rounded-3xl p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Envíanos un mensaje</h2>
-            
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
+
             {submitted && (
               <div className="mb-6 p-4 bg-green-100 border border-green-200 rounded-xl">
-                <p className="text-green-700 font-medium">¡Mensaje enviado correctamente! Te responderemos pronto.</p>
+                <p className="text-green-700 font-medium">
+                  Message sent successfully! We’ll get back to you soon.
+                </p>
               </div>
             )}
 
@@ -61,7 +65,7 @@ const ContactPage: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre completo *
+                    Full name *
                   </label>
                   <input
                     type="text"
@@ -71,7 +75,7 @@ const ContactPage: React.FC = () => {
                     value={formData.name}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
-                    placeholder="Tu nombre"
+                    placeholder="Your name"
                   />
                 </div>
                 <div>
@@ -86,7 +90,7 @@ const ContactPage: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
-                    placeholder="tu@email.com"
+                    placeholder="you@email.com"
                   />
                 </div>
               </div>
@@ -94,7 +98,7 @@ const ContactPage: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    Teléfono
+                    Phone
                   </label>
                   <input
                     type="tel"
@@ -108,7 +112,7 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                    Asunto *
+                    Subject *
                   </label>
                   <select
                     id="subject"
@@ -118,19 +122,19 @@ const ContactPage: React.FC = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
                   >
-                    <option value="">Selecciona un tema</option>
-                    <option value="producto">Consulta sobre producto</option>
-                    <option value="financiamiento">Financiamiento</option>
-                    <option value="garantia">Garantía y servicio</option>
-                    <option value="envio">Envíos y entregas</option>
-                    <option value="otro">Otro</option>
+                    <option value="">Select a topic</option>
+                    <option value="producto">Product inquiry</option>
+                    <option value="financiamiento">Financing</option>
+                    <option value="garantia">Warranty & service</option>
+                    <option value="envio">Shipping & delivery</option>
+                    <option value="otro">Other</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Mensaje *
+                  Message *
                 </label>
                 <textarea
                   id="message"
@@ -140,7 +144,7 @@ const ContactPage: React.FC = () => {
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 resize-none"
-                  placeholder="Cuéntanos cómo podemos ayudarte..."
+                  placeholder="Tell us how we can help..."
                 />
               </div>
 
@@ -152,12 +156,12 @@ const ContactPage: React.FC = () => {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Enviando...</span>
+                    <span>Sending...</span>
                   </>
                 ) : (
                   <>
                     <Send className="h-5 w-5" />
-                    <span>Enviar mensaje</span>
+                    <span>Send message</span>
                   </>
                 )}
               </button>
@@ -167,8 +171,8 @@ const ContactPage: React.FC = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-8 text-white">
-              <h2 className="text-2xl font-bold mb-6">Información de contacto</h2>
-              
+              <h2 className="text-2xl font-bold mb-6">Contact information</h2>
+
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="bg-white/20 p-3 rounded-xl">
@@ -177,7 +181,7 @@ const ContactPage: React.FC = () => {
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
                     <p className="text-orange-100">info@sunrisestore.com</p>
-                    <p className="text-orange-100">ventas@sunrisestore.com</p>
+                    <p className="text-orange-100">sales@sunrisestore.com</p>
                   </div>
                 </div>
 
@@ -186,7 +190,7 @@ const ContactPage: React.FC = () => {
                     <Phone className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Teléfono</h3>
+                    <h3 className="font-semibold mb-1">Phone</h3>
                     <p className="text-orange-100">305-833-0092</p>
                     <p className="text-orange-100">305-833-0092</p>
                   </div>
@@ -197,7 +201,7 @@ const ContactPage: React.FC = () => {
                     <MapPin className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Dirección</h3>
+                    <h3 className="font-semibold mb-1">Address</h3>
                     <p className="text-orange-100">11510 Biscayne Blvd, Miami, FL 33181</p>
                     <p className="text-orange-100">Sunrise Store</p>
                   </div>
@@ -208,10 +212,10 @@ const ContactPage: React.FC = () => {
                     <Clock className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Horarios</h3>
-                    <p className="text-orange-100">Lun - Vie: 9:00 AM - 6:00 PM</p>
-                    <p className="text-orange-100">Sáb: 10:00 AM - 4:00 PM</p>
-                    <p className="text-orange-100">Dom: Cerrado</p>
+                    <h3 className="font-semibold mb-1">Hours</h3>
+                    <p className="text-orange-100">Mon – Fri: 9:00 AM – 6:00 PM</p>
+                    <p className="text-orange-100">Sat: 10:00 AM – 4:00 PM</p>
+                    <p className="text-orange-100">Sun: Closed</p>
                   </div>
                 </div>
               </div>
@@ -219,22 +223,28 @@ const ContactPage: React.FC = () => {
 
             {/* FAQ */}
             <div className="bg-white rounded-3xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Preguntas frecuentes</h2>
-              
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently asked questions</h2>
+
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">¿Ofrecen garantía?</h3>
-                  <p className="text-gray-600 text-sm">Sí, todos nuestros productos incluyen 2 años de garantía completa.</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">Do you offer warranty?</h3>
+                  <p className="text-gray-600 text-sm">
+                    Yes — all our products include a full 2-year warranty.
+                  </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">¿Cuánto tarda el envío?</h3>
-                  <p className="text-gray-600 text-sm">Entregamos en 2-3 días hábiles a nivel nacional con envío gratuito.</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">How long does shipping take?</h3>
+                  <p className="text-gray-600 text-sm">
+                    We deliver within 2–3 business days nationwide with free shipping.
+                  </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">¿Puedo financiar mi compra?</h3>
-                  <p className="text-gray-600 text-sm">Sí, ofrecemos financiamiento flexible a través de Affirm con cuotas desde $89/mes.</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">Can I finance my purchase?</h3>
+                  <p className="text-gray-600 text-sm">
+                    Yes — we offer flexible financing through Affirm with payments from $89/month.
+                  </p>
                 </div>
               </div>
             </div>

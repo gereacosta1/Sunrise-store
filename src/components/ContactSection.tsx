@@ -13,18 +13,20 @@ const ContactSection: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     setSubmitted(true);
     setIsSubmitting(false);
     setFormData({ name: '', email: '', message: '' });
-    
+
     setTimeout(() => setSubmitted(false), 3000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -32,18 +34,18 @@ const ContactSection: React.FC = () => {
   };
 
   return (
-    <section id="contacto" className="py-20 bg-white">
+    <section id="contact" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            ¿Tienes{' '}
+            Have any{' '}
             <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-              preguntas?
+              questions?
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Estamos aquí para ayudarte. Contáctanos y te responderemos lo antes posible.
+            We’re here to help. Contact us and we’ll get back to you as soon as possible.
           </p>
         </div>
 
@@ -52,19 +54,24 @@ const ContactSection: React.FC = () => {
           <div className="bg-gray-50 rounded-3xl p-8">
             <div className="flex items-center space-x-3 mb-6">
               <MessageCircle className="h-8 w-8 text-orange-500" />
-              <h3 className="text-2xl font-bold text-gray-900">Envíanos un mensaje</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Send us a message</h3>
             </div>
-            
+
             {submitted && (
               <div className="mb-6 p-4 bg-green-100 border border-green-200 rounded-xl">
-                <p className="text-green-700 font-medium">¡Mensaje enviado! Te responderemos pronto.</p>
+                <p className="text-green-700 font-medium">
+                  Message sent! We’ll reply soon.
+                </p>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre *
+                <label
+                  htmlFor="contact-name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Name *
                 </label>
                 <input
                   type="text"
@@ -74,12 +81,15 @@ const ContactSection: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
-                  placeholder="Tu nombre"
+                  placeholder="Your name"
                 />
               </div>
 
               <div>
-                <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="contact-email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Email *
                 </label>
                 <input
@@ -90,13 +100,16 @@ const ContactSection: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
-                  placeholder="tu@email.com"
+                  placeholder="you@email.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Mensaje *
+                <label
+                  htmlFor="contact-message"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Message *
                 </label>
                 <textarea
                   id="contact-message"
@@ -106,7 +119,7 @@ const ContactSection: React.FC = () => {
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 resize-none"
-                  placeholder="¿En qué podemos ayudarte?"
+                  placeholder="How can we help?"
                 />
               </div>
 
@@ -118,12 +131,12 @@ const ContactSection: React.FC = () => {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Enviando...</span>
+                    <span>Sending...</span>
                   </>
                 ) : (
                   <>
                     <Send className="h-5 w-5" />
-                    <span>Enviar mensaje</span>
+                    <span>Send message</span>
                   </>
                 )}
               </button>
@@ -133,8 +146,8 @@ const ContactSection: React.FC = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl p-8 text-white">
-              <h3 className="text-2xl font-bold mb-6">Información de contacto</h3>
-              
+              <h3 className="text-2xl font-bold mb-6">Contact information</h3>
+
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="bg-white/20 p-3 rounded-xl">
@@ -151,7 +164,7 @@ const ContactSection: React.FC = () => {
                     <Phone className="h-6 w-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold">Teléfono</h4>
+                    <h4 className="font-semibold">Phone</h4>
                     <p className="text-orange-100">305-833-0092</p>
                   </div>
                 </div>
@@ -161,7 +174,7 @@ const ContactSection: React.FC = () => {
                     <MapPin className="h-6 w-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold">Dirección</h4>
+                    <h4 className="font-semibold">Address</h4>
                     <p className="text-orange-100">11510 Biscayne Blvd, Miami, FL 33181</p>
                     <p className="text-orange-100">Sunrise Store</p>
                   </div>
@@ -171,19 +184,19 @@ const ContactSection: React.FC = () => {
 
             {/* Business Hours */}
             <div className="bg-white rounded-3xl p-8 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Horarios de atención</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Business hours</h3>
               <div className="space-y-3 text-gray-600">
                 <div className="flex justify-between">
-                  <span>Lunes - Viernes</span>
-                  <span className="font-medium">9:00 AM - 6:00 PM</span>
+                  <span>Monday – Friday</span>
+                  <span className="font-medium">9:00 AM – 6:00 PM</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Sábado</span>
-                  <span className="font-medium">10:00 AM - 4:00 PM</span>
+                  <span>Saturday</span>
+                  <span className="font-medium">10:00 AM – 4:00 PM</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Domingo</span>
-                  <span className="font-medium text-red-500">Cerrado</span>
+                  <span>Sunday</span>
+                  <span className="font-medium text-red-500">Closed</span>
                 </div>
               </div>
             </div>

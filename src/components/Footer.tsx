@@ -3,24 +3,24 @@ import { Zap, Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 
 
 const Footer: React.FC = () => {
   const quickLinks = [
-    { name: 'Inicio', href: '#home' },
-    { name: 'Catálogo', href: '#catalog' },
-    { name: 'Financiamiento', href: '#financing' },
-    { name: 'Contacto', href: '#contact' },
+    { name: 'Home', href: '#home' },
+    { name: 'Catalog', href: '#catalog' },
+    { name: 'Financing', href: '#financing' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   const categories = [
-    { name: 'Scooters Eléctricos', href: '#' },
-    { name: 'Motocicletas Eléctricas', href: '#' },
-    { name: 'Accesorios', href: '#' },
-    { name: 'Repuestos', href: '#' },
+    { name: 'Electric Scooters', href: '#' },
+    { name: 'Electric Motorcycles', href: '#' },
+    { name: 'Accessories', href: '#' },
+    { name: 'Parts', href: '#' },
   ];
 
   const support = [
-    { name: 'Centro de Ayuda', href: '#' },
-    { name: 'Garantías', href: '#' },
-    { name: 'Devoluciones', href: '#' },
-    { name: 'Términos y Condiciones', href: '#' },
+    { name: 'Help Center', href: '#' },
+    { name: 'Warranty', href: '#' },
+    { name: 'Returns', href: '#' },
+    { name: 'Terms & Conditions', href: '#' },
   ];
 
   const socialLinks = [
@@ -43,10 +43,9 @@ const Footer: React.FC = () => {
               </div>
               <span className="text-3xl font-bold">Sunrise Store</span>
             </div>
-            
+
             <p className="text-orange-100 leading-relaxed max-w-md">
-              Liderando la revolución de la movilidad eléctrica con productos de calidad superior 
-              y un servicio excepcional desde 2021.
+              Leading the electric mobility revolution with premium products and exceptional service since 2021.
             </p>
 
             {/* Contact Info */}
@@ -68,11 +67,11 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Enlaces Rápidos</h3>
+            <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-orange-100 hover:text-white transition-colors duration-200 hover:underline"
                   >
@@ -85,11 +84,11 @@ const Footer: React.FC = () => {
 
           {/* Categories */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Categorías</h3>
+            <h3 className="text-lg font-semibold mb-6">Categories</h3>
             <ul className="space-y-3">
               {categories.map((category) => (
                 <li key={category.name}>
-                  <a 
+                  <a
                     href={category.href}
                     className="text-orange-100 hover:text-white transition-colors duration-200 hover:underline"
                   >
@@ -102,11 +101,11 @@ const Footer: React.FC = () => {
 
           {/* Support */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Soporte</h3>
+            <h3 className="text-lg font-semibold mb-6">Support</h3>
             <ul className="space-y-3">
               {support.map((item) => (
                 <li key={item.name}>
-                  <a 
+                  <a
                     href={item.href}
                     className="text-orange-100 hover:text-white transition-colors duration-200 hover:underline"
                   >
@@ -121,18 +120,18 @@ const Footer: React.FC = () => {
         {/* Newsletter */}
         <div className="border-t border-orange-500/30 pt-12 mb-12">
           <div className="max-w-md mx-auto text-center">
-            <h3 className="text-2xl font-bold mb-4">Mantente actualizado</h3>
+            <h3 className="text-2xl font-bold mb-4">Stay up to date</h3>
             <p className="text-orange-100 mb-6">
-              Recibe las últimas noticias y ofertas especiales
+              Get the latest news and special offers.
             </p>
             <div className="flex space-x-2">
               <input
                 type="email"
-                placeholder="Tu email"
+                placeholder="Your email"
                 className="flex-1 px-4 py-3 rounded-xl text-gray-900 bg-white/95 backdrop-blur-sm border-0 focus:ring-2 focus:ring-white/50 focus:outline-none"
               />
               <button className="bg-white text-orange-500 px-6 py-3 rounded-xl font-semibold hover:bg-orange-50 transition-colors duration-200">
-                Suscribir
+                Subscribe
               </button>
             </div>
           </div>
@@ -143,7 +142,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
             <div className="text-orange-100 text-center md:text-left">
-              © 2025 Sunrise Store. Todos los derechos reservados.
+              © 2025 Sunrise Store. All rights reserved.
             </div>
 
             {/* Social Links */}

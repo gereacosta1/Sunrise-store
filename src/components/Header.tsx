@@ -40,7 +40,7 @@ const Header: React.FC = () => {
     { label: 'Catalog', href: '#catalog' },
     { label: 'Financing', href: '#financing' },
     // Mantengo el id existente para no romper el scroll:
-    { label: 'Contact', href: '#contacto' },
+    { label: 'Contact', href: '#contact' },
   ];
 
   return (

@@ -4,36 +4,63 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: 'Inter', sans-serif;
-  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; }
 }
 
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 1s ease-out;
-  }
-  
+  /* Fade-in */
+  .animate-fade-in { animation: fadeIn 1s ease-out; }
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
+
+  /* Utilidades varias */
+  .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,.1); }
   .bg-gradient-orange {
     background: linear-gradient(135deg, #FF6A00 0%, #FFA733 50%, #FF944D 100%);
+  }
+
+  /* ===============================
+     TÍTULO 3D (estilo póster)
+     =============================== */
+
+  /* Extrusión oscura con capas de text-shadow */
+  .heading-3d {
+    --ex: #0e0e0e;              /* color de la extrusión */
+    color: #ffffff;              /* cara del texto (blanco) */
+    text-shadow:
+      0px  1px 0 var(--ex),
+      1px  2px 0 var(--ex),
+      2px  3px 0 var(--ex),
+      3px  4px 0 var(--ex),
+      4px  5px 0 var(--ex),
+      5px  6px 0 var(--ex),
+      6px  7px 0 var(--ex),
+      7px  8px 0 var(--ex),
+      8px  9px 0 var(--ex),
+      9px 10px 0 var(--ex),
+      /* suave sombra ambiental para volumen */
+      10px 12px 16px rgba(0,0,0,.28);
+  }
+
+  /* Inclinación ligera para el look del póster (opcional) */
+  .heading-tilt {
+    display: inline-block;
+    transform: skewX(-8deg) rotate(-2deg);
+  }
+
+  /* Variante de extrusión más corta para móviles (opcional) */
+  @media (max-width: 640px) {
+    .heading-3d {
+      text-shadow:
+        0px  1px 0 var(--ex),
+        1px  2px 0 var(--ex),
+        2px  3px 0 var(--ex),
+        3px  4px 0 var(--ex),
+        4px  5px 0 var(--ex),
+        6px  8px 12px rgba(0,0,0,.26);
+    }
   }
 }

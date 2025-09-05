@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import CartDrawer from './CartDrawer';
@@ -10,6 +10,7 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const { getTotalItems } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
   const totalItems = getTotalItems();
 
   useEffect(() => {
@@ -17,6 +18,9 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const scrollToTop = () =>
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -27,19 +31,30 @@ const Header: React.FC = () => {
     if (href.startsWith('#')) {
       e.preventDefault();
       if (location.pathname !== '/') {
-        window.location.href = '/' + href;
+        // navega a home con el hash, y ScrollToTop hace el resto
+        navigate('/' + href);
       } else {
         scrollToSection(href.substring(1));
       }
+      setIsMenuOpen(false);
+      return;
     }
     setIsMenuOpen(false);
+  };
+
+  // 👇 Handler para Home y Logo
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (location.pathname === '/') {
+      e.preventDefault(); // evita que Link intente “navegar” a la misma ruta
+      scrollToTop();
+      setIsMenuOpen(false);
+    } // si no estás en '/', Link hará navigate('/') y ScrollToTop subirá
   };
 
   const navigation = [
     { label: 'Home', href: '/' },
     { label: 'Catalog', href: '#catalog' },
     { label: 'Financing', href: '#financing' },
-    // Mantengo el id existente para no romper el scroll:
     { label: 'Contact', href: '#contact' },
   ];
 
@@ -53,7 +68,7 @@ const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" onClick={handleHomeClick} className="flex items-center space-x-2" aria-label="Go to home">
               <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-xl">
                 <Zap className="h-6 w-6 text-white" />
               </div>
@@ -65,7 +80,16 @@ const Header: React.FC = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
               {navigation.map((item) =>
-                item.href.startsWith('#') ? (
+                item.href === '/' ? (
+                  <Link
+                    key={item.label}
+                    to="/"
+                    onClick={handleHomeClick}
+                    className="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md px-2 py-1"
+                  >
+                    {item.label}
+                  </Link>
+                ) : item.href.startsWith('#') ? (
                   <button
                     key={item.label}
                     onClick={(e) => handleNavClick(item.href, e)}
@@ -74,15 +98,7 @@ const Header: React.FC = () => {
                   >
                     {item.label}
                   </button>
-                ) : (
-                  <Link
-                    key={item.label}
-                    to={item.href}
-                    className="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md px-2 py-1"
-                  >
-                    {item.label}
-                  </Link>
-                )
+                ) : null
               )}
             </nav>
 
@@ -117,7 +133,16 @@ const Header: React.FC = () => {
             <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-t">
               <nav className="px-4 py-4 space-y-2">
                 {navigation.map((item) =>
-                  item.href.startsWith('#') ? (
+                  item.href === '/' ? (
+                    <Link
+                      key={item.label}
+                      to="/"
+                      onClick={handleHomeClick}
+                      className="block py-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : item.href.startsWith('#') ? (
                     <button
                       key={item.label}
                       onClick={(e) => handleNavClick(item.href, e)}
@@ -126,16 +151,7 @@ const Header: React.FC = () => {
                     >
                       {item.label}
                     </button>
-                  ) : (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      className="block py-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.label}
-                    </Link>
-                  )
+                  ) : null
                 )}
               </nav>
             </div>

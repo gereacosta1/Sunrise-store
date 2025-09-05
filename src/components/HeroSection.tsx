@@ -4,9 +4,7 @@ import { ArrowRight, CreditCard } from 'lucide-react';
 const HeroSection: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -19,27 +17,40 @@ const HeroSection: React.FC = () => {
         }}
       >
         {/* Orange Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/90 via-orange-600/80 to-orange-500/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/90 via-orange-600/80 to-orange-500/90" />
+      </div>
+
+      {/* Isla de contraste (versión suave) */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="hero-spot-soft" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="space-y-8 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-            Welcome to{' '}
-            <span className="block bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">
+          <h1 className="leading-[1.05] font-extrabold">
+            <span className="block text-white/95 text-4xl md:text-6xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
+              Welcome to
+            </span>
+
+            {/* Elegante: gradiente + glow suave (sin stroke) */}
+            <span
+              className="
+                block mt-1 text-6xl md:text-8xl xl:text-9xl heading-3d heading-tilt tracking-tight
+              "
+            >
               Sunrise Store
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-orange-100 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-2xl text-orange-100/95 font-light max-w-2xl mx-auto leading-relaxed">
             The new era of electric mobility is here. Discover our next-generation electric scooters and motorcycles.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
             <button
               onClick={() => scrollToSection('catalog')}
-              className="group bg-white text-orange-500 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-orange-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-500"
+              className="group bg-white text-orange-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-orange-50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-orange-500"
             >
               <span>Explore now</span>
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -59,9 +70,9 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 transform animate-bounce">
         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
+          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse" />
         </div>
       </div>
     </section>

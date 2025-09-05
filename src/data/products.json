@@ -32,7 +32,7 @@
       "/IMG/scooter-electrico-2.jpeg",
       "/IMG/scooter-electrico-3.jpeg"
     ],
-    "category": "motorcycle",
+    "category": "scooter",
     "description": "Premium electric motorcycle with advanced technology and futuristic design.",
     "longDescription": "Lightning Bike X1 is our most advanced electric motorcycle—built for riders who want power, style, and sustainability. With cutting-edge tech and premium materials, it delivers an unmatched riding experience.",
     "specs": {
@@ -99,7 +99,7 @@
     "gallery": [
       "/IMG/bici-electric-negra.jpeg"
     ],
-    "category": "scooter",
+    "category": "motorcycle",
     "description": "Ideal for daily urban commutes—affordable and reliable.",
     "longDescription": "City Rider is the perfect choice for those seeking accessible electric mobility without sacrificing quality. Great for students and professionals who need dependable daily transport.",
     "specs": {
@@ -143,7 +143,7 @@
     "gallery": [
       "/IMG/parlanteJBL.jpeg"
     ],
-    "category": "Speaker",
+    "category": "speaker",
     "description": "Portable Bluetooth speaker with powerful sound—great for indoors and outdoors.",
     "longDescription": "Compact, rugged, and ready to go. The JBL Flip delivers clear, punchy audio in a portable form factor. Perfect for daily use and weekend trips.",
     "specs": {
@@ -165,7 +165,7 @@
     "gallery": [
       "/IMG/parlanteJBL2.jpeg"
     ],
-    "category": "Speaker",
+    "category": "speaker",
     "description": "Ultra-portable Bluetooth speaker for music on the go.",
     "longDescription": "Small size, big sound. JBL GO is designed to travel light and play loud—your pocket-size music companion.",
     "specs": {

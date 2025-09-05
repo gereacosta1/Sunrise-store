@@ -9,11 +9,14 @@ import ContactPage from './pages/ContactPage';
 import FinancingPage from './pages/FinancingPage';
 import OrderSuccess from './pages/OrderSuccess';
 import CheckoutCanceled from './pages/CheckoutCanceled';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <CartProvider>
       <Router>
+        {/* 👇 Se monta una vez y escucha cambios de ruta */}
+        <ScrollToTop />
         <div className="min-h-screen">
           <Header />
           <Routes>

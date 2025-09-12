@@ -26,6 +26,12 @@ exports.handler = async (event) => {
     const PUB  = process.env.AFFIRM_PUBLIC_KEY;
     const PRIV = process.env.AFFIRM_PRIVATE_KEY;
 
+    console.log('[AFFIRM create] env=prod api=', API,
+  'pub_head=', (PUB||'').slice(0,6),
+  'priv_head=', (PRIV||'').slice(0,6),
+  'site=', site
+  ); 
+
     console.log("[AFFIRM create] env=", ENV, "api=", API, "pub_len=", (PUB||"").length, "priv_len=", (PRIV||"").length, "site=", SITE);
     if (!PUB || !PRIV) {
       return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };

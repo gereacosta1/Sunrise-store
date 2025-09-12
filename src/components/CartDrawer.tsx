@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import React, { useEffect, useRef } from "react";
+import { X, Plus, Minus, ShoppingBag } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 declare global {
-  interface Window { affirm?: any }
+  interface Window {
+    affirm?: any;
+  }
 }
 
 interface CartDrawerProps {
@@ -15,17 +17,19 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart();
   const titleRef = useRef<HTMLHeadingElement>(null);
 
-  useEffect(() => { if (isOpen && titleRef.current) titleRef.current.focus(); }, [isOpen]);
+  useEffect(() => {
+    if (isOpen && titleRef.current) titleRef.current.focus();
+  }, [isOpen]);
 
   useEffect(() => {
-    const onEsc = (e: KeyboardEvent) => e.key === 'Escape' && isOpen && onClose();
+    const onEsc = (e: KeyboardEvent) => e.key === "Escape" && isOpen && onClose();
     if (isOpen) {
-      document.addEventListener('keydown', onEsc);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", onEsc);
+      document.body.style.overflow = "hidden";
     }
     return () => {
-      document.removeEventListener('keydown', onEsc);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", onEsc);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -34,29 +38,31 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
     try {
       const origin = window.location.origin;
-      const toAbs = (u: string) => (u?.startsWith('http') ? u : `${origin}${u?.startsWith('/') ? '' : '/'}${u || ''}`);
+      const toAbs = (u: string) =>
+        u?.startsWith("http") ? u : `${origin}${u?.startsWith("/") ? "" : "/"}${u || ""}`;
 
-      // Items en formato Affirm (centavos + URLs absolutas)
+      // Items en formato Affirm (valores en CENTAVOS y URLs ABSOLUTAS)
       const affItems = items.map((item) => ({
         display_name: item.name,
         sku: item.slug || String(item.id),
-        unit_price: Math.round(Number(item.price) * 100), // USD -> centavos
+        unit_price: Math.round(Number(item.price) * 100), // USD -> cents
         qty: item.quantity,
         item_image_url: toAbs(item.image),
-        item_url: origin, // si tienes PDP usa `${origin}/producto/${item.slug}`
+        item_url: origin, // si luego quieres PDP: `${origin}/producto/${item.slug}`
       }));
 
       const totalCents = affItems.reduce((sum, it) => sum + it.unit_price * it.qty, 0);
 
-      const res = await fetch('/.netlify/functions/affirm-create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // Llamada a tu Function (producción)
+      const res = await fetch("/.netlify/functions/affirm-create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: affItems,
           total: totalCents,
-          currency: 'USD',
+          currency: "USD",
           merchant: {
-            user_confirmation_url: `${origin}/order-success`,
+            user_confirmation_url: `${origin}/order-success`,   // tu página
             user_cancel_url: `${origin}/checkout-canceled`,
           },
         }),
@@ -64,28 +70,27 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
       const data = await res.json();
       if (!res.ok) {
-        console.error('create-checkout error:', data);
-        alert(data?.affirm?.message || 'Affirm: no se pudo crear el checkout.');
+        console.error("create-checkout error:", data);
+        alert(data?.details || "Affirm: no se pudo crear el checkout.");
         return;
       }
 
-      // Flujo recomendado por Affirm: redirigir
+      // Redirección recomendada por Affirm
       if (data.redirect_url) {
         window.location.href = data.redirect_url;
         return;
       }
 
-      // Fallback: abrir modal con el token
+      // Fallback por si faltara redirect_url
       if (data.checkout_token && window.affirm) {
         window.affirm.checkout({ checkout_token: data.checkout_token });
         window.affirm.checkout.open();
-        return;
+      } else {
+        alert("Affirm no está disponible.");
       }
-
-      alert('Affirm no está disponible.');
     } catch (err) {
-      console.error('Checkout error:', err);
-      alert('Error procesando el checkout. Intenta de nuevo.');
+      console.error("Checkout error:", err);
+      alert("Error procesando el checkout. Intenta de nuevo.");
     }
   };
 

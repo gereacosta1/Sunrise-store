@@ -1,6 +1,4 @@
-// netlify/functions/affirm-create-checkout.js
-// Crea el checkout v2 en Affirm (producción) y devuelve checkout_token / redirect_url
-
+// Crea un checkout v2 (producción). Responde {checkout_token, redirect_url, order_id}
 const HDRS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -9,23 +7,17 @@ const HDRS = {
 };
 
 exports.handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: HDRS, body: "" };
-  }
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: HDRS, body: JSON.stringify({ error: "Method not allowed" }) };
-  }
+  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: HDRS, body: "" };
+  if (event.httpMethod !== "POST")  return { statusCode: 405, headers: HDRS, body: JSON.stringify({ error: "Method not allowed" }) };
 
   try {
     const body = JSON.parse(event.body || "{}");
-    const { items, total, currency = "USD", merchant = {}, shipping = {}, billing = {} } = body;
+    const { items, total, currency = "USD", merchant = {} } = body;
 
-    if (!Array.isArray(items) || items.length === 0) {
+    if (!Array.isArray(items) || items.length === 0)
       return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Items are required" }) };
-    }
-    if (!Number.isInteger(total)) {
-      return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Total must be an integer number of cents" }) };
-    }
+    if (!Number.isInteger(total))
+      return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Total must be integer cents" }) };
 
     const ENV  = String(process.env.AFFIRM_ENV || "prod").toLowerCase();
     const API  = process.env.AFFIRM_API_BASE || (ENV.startsWith("prod") ? "https://api.affirm.com" : "https://sandbox.affirm.com");
@@ -35,61 +27,53 @@ exports.handler = async (event) => {
     const PRIV = process.env.AFFIRM_PRIVATE_KEY;
 
     console.log("[AFFIRM create] env=", ENV, "api=", API, "pub_len=", (PUB||"").length, "priv_len=", (PRIV||"").length, "site=", SITE);
-
     if (!PUB || !PRIV) {
       return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };
     }
 
-    const orderId = merchant.order_id || `SS-${Date.now()}`;
+    const orderId = `SS-${Date.now()}`;
 
-    // 🔴 IMPORTANTE: incluir merchant.public_api_key
     const checkout = {
       merchant: {
-        public_api_key: PUB, // <--- CLAVE PÚBLICA AQUÍ
         user_confirmation_url: merchant.user_confirmation_url || `${SITE}/order-success`,
         user_cancel_url:       merchant.user_cancel_url       || `${SITE}/checkout-canceled`,
         user_confirmation_url_action: "GET",
         name: merchant.name || "Sunrise Store",
       },
-      shipping,
-      billing,
       items: items.map((it) => ({
         display_name: it.display_name,
         sku: it.sku,
-        unit_price: it.unit_price,   // en centavos
+        unit_price: it.unit_price, // integer (cents)
         qty: it.qty,
-        item_image_url: it.item_image_url, // URLs absolutas https
-        item_url: it.item_url,             // URLs absolutas https
+        item_image_url: it.item_image_url,
+        item_url: it.item_url,
       })),
-      discounts: {},
-      metadata: { platform: "sunrise-store" },
       order_id: orderId,
       currency,
       tax_amount: 0,
       shipping_amount: 0,
-      total, // en centavos, debe matchear suma de items
+      total, // integer (cents) = suma de items
+      metadata: { platform: "sunrise-store", order_id: orderId }
     };
 
-    const resp = await fetch(`${API}/api/v2/checkout/`, {
+    const AUTH = "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64");
+
+    const res = await fetch(`${API}/api/v2/checkout/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64"),
-      },
-      body: JSON.stringify({ checkout }), // Affirm exige el wrapper { checkout: ... }
+      headers: { "Content-Type": "application/json", Authorization: AUTH },
+      body: JSON.stringify({ checkout }),
     });
 
-    const text = await resp.text();
-    if (!resp.ok) {
-      console.error("[AFFIRM create] status=", resp.status, "body=", text);
-      return {
-        statusCode: resp.status,
-        headers: HDRS,
-        body: JSON.stringify({ error: "affirm_error", status: resp.status, affirm: safeParse(text) }),
-      };
+    // Devuelve error de Affirm para depurar rápido
+    if (!res.ok) {
+      const txt = await res.text();
+      console.error("[AFFIRM create] status=", res.status, "body=", txt);
+      let aff = null;
+      try { aff = JSON.parse(txt); } catch {}
+      return { statusCode: res.status, headers: HDRS, body: JSON.stringify({ error: "affirm_error", status: res.status, affirm: aff || txt }) };
     }
 
-    const data = safeParse(text);
+    const data = await res.json();
     return {
       statusCode: 200,
       headers: HDRS,
@@ -100,9 +84,7 @@ exports.handler = async (event) => {
       }),
     };
   } catch (e) {
-    console.error("[affirm-create] exception", e);
+    console.error("Checkout creation error:", e);
     return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Internal server error" }) };
   }
 };
-
-function safeParse(t) { try { return JSON.parse(t); } catch { return { raw: t }; } }

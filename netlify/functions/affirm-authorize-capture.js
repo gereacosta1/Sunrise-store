@@ -35,6 +35,11 @@ exports.handler = async (event) => {
 
     const AUTH = "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64");
 
+    console.log('[AFFIRM auth/cap] base=', API_BASE,
+            ' pub.len=', (PUB||'').length,
+            ' priv.len=', (PRIV||'').length);
+
+
     // 1) AUTHORIZE -> charge.id
     const aRes = await fetch(`${API_BASE}/api/v2/charges`, {
       method: "POST",

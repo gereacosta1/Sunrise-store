@@ -28,6 +28,12 @@ exports.handler = async (event) => {
     const PUB  = process.env.AFFIRM_PUBLIC_KEY;
     const PRIV = process.env.AFFIRM_PRIVATE_KEY;
 
+    console.log('[AFFIRM create] base=', base,
+            ' pub.len=', (publicKey||'').length,
+            ' priv.len=', (privateKey||'').length,
+            ' site=', site);
+
+
     console.log(`[AFFIRM] env=${ENV} api=${API} pub_len=${(PUB||"").length} priv_len=${(PRIV||"").length}`);
     if (!PUB || !PRIV) {
       return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };

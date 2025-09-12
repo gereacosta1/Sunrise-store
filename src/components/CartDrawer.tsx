@@ -3,9 +3,7 @@ import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 declare global {
-  interface Window {
-    affirm?: any;
-  }
+  interface Window { affirm?: any }
 }
 
 interface CartDrawerProps {
@@ -17,9 +15,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart();
   const titleRef = useRef<HTMLHeadingElement>(null);
 
-  useEffect(() => {
-    if (isOpen && titleRef.current) titleRef.current.focus();
-  }, [isOpen]);
+  useEffect(() => { if (isOpen && titleRef.current) titleRef.current.focus(); }, [isOpen]);
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => e.key === 'Escape' && isOpen && onClose();
@@ -37,24 +33,21 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
     if (items.length === 0) return;
 
     try {
-      // Origen absoluto del sitio (apex o www según llegue el usuario)
       const origin = window.location.origin;
-      const toAbs = (u: string) =>
-        u?.startsWith('http') ? u : `${origin}${u.startsWith('/') ? '' : '/'}${u || ''}`;
+      const toAbs = (u: string) => (u?.startsWith('http') ? u : `${origin}${u?.startsWith('/') ? '' : '/'}${u || ''}`);
 
-      // Mapear items al formato Affirm (precios en centavos + URLs absolutas)
+      // Items en formato Affirm (centavos + URLs absolutas)
       const affItems = items.map((item) => ({
         display_name: item.name,
         sku: item.slug || String(item.id),
         unit_price: Math.round(Number(item.price) * 100), // USD -> centavos
         qty: item.quantity,
         item_image_url: toAbs(item.image),
-        item_url: origin, // si luego tienes PDP, cambia a `${origin}/producto/${item.slug}`
+        item_url: origin, // si tienes PDP usa `${origin}/producto/${item.slug}`
       }));
 
       const totalCents = affItems.reduce((sum, it) => sum + it.unit_price * it.qty, 0);
 
-      // Crear checkout en la Function
       const res = await fetch('/.netlify/functions/affirm-create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -70,26 +63,26 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         console.error('create-checkout error:', data);
-        alert(data?.details || 'Affirm: no se pudo crear el checkout.');
+        alert(data?.affirm?.message || 'Affirm: no se pudo crear el checkout.');
         return;
       }
 
-      // ✅ Flujo recomendado por Affirm: redirigir a redirect_url
+      // Flujo recomendado por Affirm: redirigir
       if (data.redirect_url) {
         window.location.href = data.redirect_url;
         return;
       }
 
-      // Fallback: abrir modal si vino sólo el token y ya está cargado Affirm.js
+      // Fallback: abrir modal con el token
       if (data.checkout_token && window.affirm) {
         window.affirm.checkout({ checkout_token: data.checkout_token });
         window.affirm.checkout.open();
-      } else {
-        alert('Affirm no está disponible.');
+        return;
       }
+
+      alert('Affirm no está disponible.');
     } catch (err) {
       console.error('Checkout error:', err);
       alert('Error procesando el checkout. Intenta de nuevo.');
@@ -100,10 +93,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300" onClick={onClose} />
-
-      {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform transition-transform duration-300 flex flex-col">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 ref={titleRef} className="text-2xl font-bold text-gray-900 focus:outline-none" tabIndex={-1}>
@@ -114,7 +104,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Items */}
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 ? (
             <div className="text-center py-12">
@@ -149,7 +138,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-200 p-6 space-y-4">
             <div className="flex justify-between items-center text-xl font-bold">
@@ -157,10 +145,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               <span className="text-orange-500">${getTotal().toLocaleString()}</span>
             </div>
             <div className="space-y-3">
-              <button
-                onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold"
-              >
+              <button onClick={handleCheckout} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold">
                 Pay with Affirm
               </button>
               <button onClick={clearCart} className="w-full text-gray-500 hover:text-gray-700">

@@ -1,12 +1,13 @@
 // netlify/functions/affirm-authorize-capture.js
-// Autoriza un cargo con checkout_token y luego CAPTURA (full o amount opcional)
-
+// Autoriza un cargo (checkout_token -> charge.id) y CAPTURA (full o parcial).
 const HDRS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Content-Type": "application/json",
 };
+
+const tryParse = (t) => { try { return JSON.parse(t); } catch { return null; } };
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: HDRS, body: "" };
@@ -18,46 +19,40 @@ exports.handler = async (event) => {
       JSON.parse(event.body || "{}");
 
     if (!checkout_token || !order_id) {
-      return {
-        statusCode: 400,
-        headers: HDRS,
-        body: JSON.stringify({ error: "Missing checkout_token or order_id" }),
-      };
+      return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Missing checkout_token or order_id" }) };
     }
 
     const API_BASE = process.env.AFFIRM_API_BASE || "https://api.affirm.com";
-    const PUB = process.env.AFFIRM_PUBLIC_KEY;
-    const PRIV = process.env.AFFIRM_PRIVATE_KEY;
+    const PUB = process.env.AFFIRM_PUBLIC_KEY || "";
+    const PRIV = process.env.AFFIRM_PRIVATE_KEY || "";
+
+    console.log("[AFFIRM auth/cap] api=", API_BASE, "pub_len=", PUB.length, "priv_len=", PRIV.length);
+
     if (!PUB || !PRIV) {
-      console.error("[AFFIRM] Missing keys");
-      return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };
+      return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "config_error", detail: "Missing keys" }) };
     }
 
     const AUTH = "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64");
 
-    console.log('[AFFIRM auth/cap] base=', API_BASE,
-            ' pub.len=', (PUB||'').length,
-            ' priv.len=', (PRIV||'').length);
-
-
-    // 1) AUTHORIZE -> charge.id
+    // 1) AUTHORIZE
     const aRes = await fetch(`${API_BASE}/api/v2/charges`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: AUTH },
       body: JSON.stringify({ checkout_token }),
     });
-
     const aTxt = await aRes.text();
+    const aJson = tryParse(aTxt);
+
     if (!aRes.ok) {
-      console.error("[AFFIRM authorize] status=", aRes.status, aTxt);
-      return { statusCode: aRes.status, headers: HDRS, body: JSON.stringify({ error: "Failed to authorize", detail: aTxt }) };
+      console.error("[AFFIRM authorize] status=", aRes.status, "body=", aTxt.slice(0, 800));
+      return { statusCode: aRes.status, headers: HDRS, body: JSON.stringify({ error: "authorize_failed", affirm: aJson, raw: !aJson ? aTxt.slice(0,800) : undefined }) };
     }
-    const charge = JSON.parse(aTxt);
+    const charge = aJson || {};
     const charge_id = charge.id;
 
     // 2) CAPTURE
     const capBody = { order_id };
-    if (Number.isInteger(amount_cents)) capBody.amount = amount_cents; // opcional – captura parcial/total
+    if (Number.isInteger(amount_cents)) capBody.amount = amount_cents;
     if (shipping_carrier) capBody.shipping_carrier = shipping_carrier;
     if (shipping_confirmation) capBody.shipping_confirmation = shipping_confirmation;
 
@@ -66,21 +61,17 @@ exports.handler = async (event) => {
       headers: { "Content-Type": "application/json", Authorization: AUTH },
       body: JSON.stringify(capBody),
     });
-
     const cTxt = await cRes.text();
-    if (!cRes.ok) {
-      console.error("[AFFIRM capture] status=", cRes.status, cTxt);
-      return { statusCode: cRes.status, headers: HDRS, body: JSON.stringify({ error: "Failed to capture", detail: cTxt }) };
-    }
-    const cap = JSON.parse(cTxt);
+    const cJson = tryParse(cTxt);
 
-    return {
-      statusCode: 200,
-      headers: HDRS,
-      body: JSON.stringify({ ok: true, charge_id, amount: cap.amount, currency: cap.currency }),
-    };
+    if (!cRes.ok) {
+      console.error("[AFFIRM capture] status=", cRes.status, "body=", cTxt.slice(0, 800));
+      return { statusCode: cRes.status, headers: HDRS, body: JSON.stringify({ error: "capture_failed", affirm: cJson, raw: !cJson ? cTxt.slice(0,800) : undefined }) };
+    }
+
+    return { statusCode: 200, headers: HDRS, body: JSON.stringify({ ok: true, charge_id, amount: cJson?.amount, currency: cJson?.currency }) };
   } catch (e) {
-    console.error("[affirm-authorize-capture] error", e);
-    return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Internal server error" }) };
+    console.error("[affirm-authorize-capture] exception", e);
+    return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "server_exception", detail: String(e && e.message || e) }) };
   }
 };

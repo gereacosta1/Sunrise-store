@@ -36,55 +36,67 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   }, [isOpen, onClose]);
 
   const handleCheckout = async () => {
-    if (items.length === 0) return;
+  if (items.length === 0) return;
 
-    try {
-      // Mapea items a formato Affirm (centavos + URLs absolutas)
-      const affItems = items.map((item) => ({
-        display_name: item.name,
-        sku: item.slug || String(item.id),
-        unit_price: Math.round(Number(item.price) * 100),           // USD -> centavos
-        qty: item.quantity,
-        item_image_url: `${SITE}${item.image}`,                     // absoluta
-        item_url: `${SITE}/`,                                       // URL válida del sitio (puedes ajustar a PDP)
-      }));
+  try {
+    const origin = window.location.origin;
+    const toAbs = (u: string) =>
+      u?.startsWith("http") ? u : `${origin}${u?.startsWith("/") ? "" : "/"}${u || ""}`;
 
-      const totalCents = affItems.reduce((sum, it) => sum + it.unit_price * it.qty, 0);
+    // Items en formato Affirm (centavos + URLs absolutas)
+    const affItems = items.map((item) => ({
+      display_name: item.name,
+      sku: item.slug || String(item.id),
+      unit_price: Math.round(Number(item.price) * 100), // USD -> centavos
+      qty: item.quantity,
+      item_image_url: toAbs(item.image),                // absoluta
+      item_url: origin,                                  // usa home; si tienes PDP, cámbialo aquí
+    }));
 
-      // Crea el checkout en tu Function
-      const res = await fetch('/.netlify/functions/affirm-create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: affItems,
-          total: totalCents,
-          currency: 'USD',
-          merchant: {
-            user_confirmation_url: `${SITE}/order-success`,   // coincide con tu página
-            user_cancel_url: `${SITE}/checkout-canceled`,
-          },
-        }),
-      });
+    const totalCents = affItems.reduce((sum, it) => sum + it.unit_price * it.qty, 0);
 
-      const data = await res.json();
-      if (!res.ok) {
-        console.error('create-checkout error:', data);
-        alert('Affirm: no se pudo crear el checkout.');
-        return;
-      }
+    // Llamamos a la Function en Netlify
+    const res = await fetch("/.netlify/functions/affirm-create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: affItems,
+        total: totalCents,
+        currency: "USD",
+        // Estas URLs se sobre-escriben en la Function con AFFIRM_SITE_BASE_URL si las dejas vacías
+        merchant: {
+          user_confirmation_url: `${origin}/orden-exitosa`,
+          user_cancel_url: `${origin}/checkout-cancelado`,
+        },
+      }),
+    });
 
-      // Abre Affirm con el token devuelto
-      if (window.affirm && data.checkout_token) {
-        window.affirm.checkout({ checkout_token: data.checkout_token });
-        window.affirm.checkout.open();
-      } else {
-        alert('Affirm no está disponible en la página.');
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      alert('Error procesando el checkout. Intenta de nuevo.');
+    const data = await res.json();
+    if (!res.ok) {
+      console.error("create-checkout error:", data);
+      alert(data?.details || "Affirm: no se pudo crear el checkout.");
+      return;
     }
-  };
+
+    // ✅ flujo recomendado: redirigir
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+      return;
+    }
+
+    // Fallback por si no viniera redirect_url
+    if (data.checkout_token && (window as any).affirm) {
+      (window as any).affirm.checkout({ checkout_token: data.checkout_token });
+      (window as any).affirm.checkout.open();
+    } else {
+      alert("Affirm no está disponible.");
+    }
+  } catch (err) {
+    console.error("Checkout error:", err);
+    alert("Error procesando el checkout. Intenta de nuevo.");
+  }
+};
+
 
   if (!isOpen) return null;
 

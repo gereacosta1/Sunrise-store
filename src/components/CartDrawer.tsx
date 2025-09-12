@@ -1,38 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
+
+declare global {
+  interface Window {
+    affirm?: any;
+  }
+}
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const SITE = 'https://www.sunrisestore.info'; // usa www porque ese es el que está cargado en Affirm
+
 const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const { items, removeItem, updateQuantity, getTotal, clearCart } = useCart();
-  const navigate = useNavigate();
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    if (isOpen && titleRef.current) {
-      titleRef.current.focus();
-    }
+    if (isOpen && titleRef.current) titleRef.current.focus();
   }, [isOpen]);
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
+    const onEsc = (e: KeyboardEvent) => e.key === 'Escape' && isOpen && onClose();
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', onEsc);
       document.body.style.overflow = 'hidden';
     }
-
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', onEsc);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
@@ -41,77 +39,50 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
     if (items.length === 0) return;
 
     try {
-      // Prepare checkout data for Affirm
-      const checkoutData = {
-        items: items.map(item => ({
-          display_name: item.name,
-          sku: item.slug,
-          unit_price: Math.round(item.price * 100), // Convert to cents
-          qty: item.quantity,
-          item_image_url: item.image,
-          item_url: `${window.location.origin}/producto/${item.slug}`
-        })),
-        total: Math.round(getTotal() * 100), // Convert to cents
-        currency: 'USD',
-        merchant: {
-          user_confirmation_url: `${window.location.origin}/orden-exitosa`,
-          user_cancel_url: `${window.location.origin}/checkout-cancelado`,
-          user_confirmation_url_action: 'GET',
-          name: 'Sunrise Store'
-        },
-        shipping: {
-          name: { first: 'Customer', last: 'Name' },
-          address: {
-            line1: '123 Main St',
-            city: 'Anytown',
-            state: 'CA',
-            zipcode: '12345',
-            country: 'USA'
-          }
-        },
-        billing: {
-          name: { first: 'Customer', last: 'Name' },
-          address: {
-            line1: '123 Main St',
-            city: 'Anytown',
-            state: 'CA',
-            zipcode: '12345',
-            country: 'USA'
-          }
-        }
-      };
+      // Mapea items a formato Affirm (centavos + URLs absolutas)
+      const affItems = items.map((item) => ({
+        display_name: item.name,
+        sku: item.slug || String(item.id),
+        unit_price: Math.round(Number(item.price) * 100),           // USD -> centavos
+        qty: item.quantity,
+        item_image_url: `${SITE}${item.image}`,                     // absoluta
+        item_url: `${SITE}/`,                                       // URL válida del sitio (puedes ajustar a PDP)
+      }));
 
-      const response = await fetch('/.netlify/functions/affirm-create-checkout', {
+      const totalCents = affItems.reduce((sum, it) => sum + it.unit_price * it.qty, 0);
+
+      // Crea el checkout en tu Function
+      const res = await fetch('/.netlify/functions/affirm-create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(checkoutData)
+        body: JSON.stringify({
+          items: affItems,
+          total: totalCents,
+          currency: 'USD',
+          merchant: {
+            user_confirmation_url: `${SITE}/order-success`,   // coincide con tu página
+            user_cancel_url: `${SITE}/checkout-canceled`,
+          },
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error('Error creating checkout');
+      const data = await res.json();
+      if (!res.ok) {
+        console.error('create-checkout error:', data);
+        alert('Affirm: no se pudo crear el checkout.');
+        return;
       }
 
-      const { checkout_token } = await response.json();
-
-      // Load Affirm script and open checkout
-      const script = document.createElement('script');
-      script.src =
-        process.env.NODE_ENV === 'production'
-          ? 'https://cdn1.affirm.com/js/v2/affirm.js'
-          : 'https://cdn1-sandbox.affirm.com/js/v2/affirm.js';
-
-      script.onload = () => {
-        // @ts-ignore
-        affirm.ui.ready(() => {
-          // @ts-ignore
-          affirm.checkout(checkout_token);
-        });
-      };
-
-      document.head.appendChild(script);
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert('Error processing checkout. Please try again.');
+      // Abre Affirm con el token devuelto
+      if (window.affirm && data.checkout_token) {
+        window.affirm.checkout({ checkout_token: data.checkout_token });
+        window.affirm.checkout.open();
+      } else {
+        alert('Affirm no está disponible en la página.');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert('Error procesando el checkout. Intenta de nuevo.');
     }
   };
 
@@ -119,30 +90,17 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/50 z-50 transition-opacity duration-300" onClick={onClose} />
-
-      {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform transition-transform duration-300 flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2
-            ref={titleRef}
-            className="text-2xl font-bold text-gray-900 focus:outline-none"
-            tabIndex={-1}
-          >
+          <h2 ref={titleRef} className="text-2xl font-bold text-gray-900 focus:outline-none" tabIndex={-1}>
             Shopping Cart
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-md"
-            aria-label="Close cart"
-          >
+          <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 rounded-md" aria-label="Close cart">
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        {/* Cart Items */}
         <div className="flex-1 overflow-y-auto p-6">
           {items.length === 0 ? (
             <div className="text-center py-12">
@@ -160,27 +118,15 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     <p className="text-orange-500 font-bold">${item.price.toLocaleString()}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
-                      aria-label="Decrease quantity"
-                    >
+                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="p-1 text-gray-500 hover:text-orange-500 rounded">
                       <Minus className="h-4 w-4" />
                     </button>
                     <span className="w-8 text-center font-medium">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-1 text-gray-500 hover:text-orange-500 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
-                      aria-label="Increase quantity"
-                    >
+                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="p-1 text-gray-500 hover:text-orange-500 rounded">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="p-2 text-red-500 hover:text-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
-                    aria-label="Remove item"
-                  >
+                  <button onClick={() => removeItem(item.id)} className="p-2 text-red-500 hover:text-red-700 rounded" aria-label="Remove item">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -189,7 +135,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-200 p-6 space-y-4">
             <div className="flex justify-between items-center text-xl font-bold">
@@ -199,14 +144,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             <div className="space-y-3">
               <button
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold"
               >
-                Checkout
+                Pay with Affirm
               </button>
-              <button
-                onClick={clearCart}
-                className="w-full text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md py-2"
-              >
+              <button onClick={clearCart} className="w-full text-gray-500 hover:text-gray-700">
                 Clear cart
               </button>
             </div>

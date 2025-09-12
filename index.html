@@ -12,6 +12,18 @@
   </head>
   <body>
     <div id="root"></div>
+   <!-- Affirm config + script (Vite reemplaza %VITE_AFFIRM_PUBLIC_KEY%) -->
+<script>
+  window._affirm_config = {
+    public_api_key: "%VITE_AFFIRM_PUBLIC_KEY%",
+    script: "https://cdn1.affirm.com/js/v2/affirm.js",
+  };
+</script>
+<script async src="https://cdn1.affirm.com/js/v2/affirm.js"></script>
+
+
+
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

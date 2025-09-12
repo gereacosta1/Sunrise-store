@@ -1,109 +1,150 @@
 // netlify/functions/affirm-create-checkout.js
-exports.handler = async (event) => {
-  // CORS
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json',
-  };
+// Crea el checkout v2 en Affirm (PROD). Calcula totales en centavos y arma direcciones válidas US.
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+const HDRS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Content-Type": "application/json",
+};
+
+const ABS = (url, base) => {
+  if (!url) return undefined;
+  try {
+    // si ya es absoluta, la dejamos; si empieza con "/", la resolvemos contra el site
+    return new URL(url, base).toString();
+  } catch {
+    return undefined;
   }
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
+};
+
+exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: HDRS, body: "" };
+  if (event.httpMethod !== "POST")
+    return { statusCode: 405, headers: HDRS, body: JSON.stringify({ error: "Method not allowed" }) };
 
   try {
-    const body = JSON.parse(event.body || '{}');
-    const { items, total, currency = 'USD', merchant = {}, shipping = {}, billing = {} } = body;
+    const payload = JSON.parse(event.body || "{}");
 
-    // Validaciones mínimas
-    if (!Array.isArray(items) || items.length === 0) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Items are required' }) };
-    }
-    if (!Number.isInteger(total)) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Total must be an integer amount in cents' }) };
+    // ITEMS: aceptamos price en dólares o unit_price en centavos. Normalizamos a centavos.
+    if (!Array.isArray(payload.items) || payload.items.length === 0) {
+      return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Items are required" }) };
     }
 
-    // Entorno y credenciales
-    const env = String(process.env.AFFIRM_ENV || 'sandbox').toLowerCase();
-    const isProd = env === 'prod' || env === 'production';
+    const API_BASE = process.env.AFFIRM_API_BASE || "https://api.affirm.com";
+    const SITE_BASE = process.env.AFFIRM_SITE_BASE_URL || "https://sunrisestore.info";
 
-    // Usa las que ya cargaste en Netlify; si existieran *_SANDBOX también las toma como fallback
-    const publicKey  = process.env.AFFIRM_PUBLIC_KEY  || process.env.AFFIRM_PUBLIC_KEY_SANDBOX;
-    const privateKey = process.env.AFFIRM_PRIVATE_KEY || process.env.AFFIRM_PRIVATE_KEY_SANDBOX;
+    const PUB = process.env.AFFIRM_PUBLIC_KEY;
+    const PRIV = process.env.AFFIRM_PRIVATE_KEY;
 
-    if (!publicKey || !privateKey) {
-      console.error('Missing Affirm credentials');
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server configuration error' }) };
+    if (!PUB || !PRIV) {
+      console.error("[AFFIRM] Missing keys");
+      return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };
     }
 
-    const base = isProd ? 'https://api.affirm.com/api/v2' : 'https://sandbox.affirm.com/api/v2';
+    // Normalizamos items -> cents + URLs absolutas
+    const normItems = payload.items.map((it) => {
+      // price en dólares (number) o unit_price en cents (integer)
+      let cents = Number.isInteger(it.unit_price)
+        ? it.unit_price
+        : Math.round((Number(it.price) || 0) * 100);
 
-    const orderId = `SS-${Date.now()}`;
-    const checkoutPayload = {
-      merchant: {
-        user_confirmation_url: merchant.user_confirmation_url,
-        user_cancel_url: merchant.user_cancel_url,
-        user_confirmation_url_action: 'GET', // o 'POST' si preferís recibir POST back
-        name: merchant.name || 'Sunrise Store',
-      },
-      shipping: { name: shipping.name, address: shipping.address },
-      billing:  { name: billing.name,  address: billing.address },
-      items: items.map((it) => ({
-        display_name: it.display_name,
-        sku: it.sku,
-        unit_price: it.unit_price, // en cents
-        qty: it.qty,
-        item_image_url: it.item_image_url,
-        item_url: it.item_url,
-      })),
-      discounts: {},
-      metadata: { platform: 'sunrise-store', order_id: orderId },
-      order_id: orderId,
-      currency,
-      tax_amount: 0,
-      shipping_amount: 0,
-      total, // en cents (entero)
+      if (!Number.isFinite(cents) || cents <= 0) cents = 0;
+
+      return {
+        display_name: it.display_name || it.name || "Item",
+        sku: it.sku || it.id || "SKU",
+        unit_price: cents,
+        qty: Number(it.qty || it.quantity || 1),
+        item_image_url: ABS(it.item_image_url || it.image, SITE_BASE),
+        item_url: ABS(it.item_url || it.url || (it.slug ? `/product/${it.slug}` : "/"), SITE_BASE),
+      };
+    });
+
+    // Subtotal / tax / shipping
+    const subtotal = normItems.reduce((s, i) => s + i.unit_price * i.qty, 0);
+    const shipping_amount = Number.isInteger(payload.shipping_amount) ? payload.shipping_amount : 0;
+    const tax_amount = Number.isInteger(payload.tax_amount) ? payload.tax_amount : 0;
+    const total = subtotal + shipping_amount + tax_amount;
+
+    // Nombre y dirección US válidos (Affirm procesa solo US)
+    const defName = (full = "John Doe") => {
+      const [first, ...rest] = String(full).trim().split(/\s+/);
+      return { first: first || "John", last: rest.join(" ") || "Doe" };
+    };
+    const defAddr = (a = {}) => ({
+      line1: a.line1 || "123 Main St",
+      city: a.city || "Miami",
+      state: a.state || "FL",
+      zipcode: a.zipcode || "33132",
+      country: "US",
+    });
+
+    const shipping = {
+      name: defName(payload.shipping?.name || payload.buyer?.name),
+      address: defAddr(payload.shipping?.address || payload.buyer),
+    };
+    const billing = {
+      name: defName(payload.billing?.name || payload.buyer?.name),
+      address: defAddr(payload.billing?.address || payload.buyer),
+      email: payload.buyer?.email || payload.billing?.email,
+      phone_number: payload.buyer?.phone || payload.billing?.phone,
     };
 
-    const res = await fetch(`${base}/checkout/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Basic ${Buffer.from(`${publicKey}:${privateKey}`).toString('base64')}`,
+    const order_id = `SR-${Date.now()}`;
+
+    const checkout = {
+      merchant: {
+        user_confirmation_url: payload.merchant?.user_confirmation_url || `${SITE_BASE}/order-success`,
+        user_cancel_url: payload.merchant?.user_cancel_url || `${SITE_BASE}/checkout-canceled`,
+        user_confirmation_url_action: "GET",
+        name: payload.merchant?.name || "Sunrise Store",
       },
-      body: JSON.stringify(checkoutPayload),
+      items: normItems,
+      shipping,
+      billing,
+      discounts: {},
+      metadata: { site: "sunrisestore.info", order_id },
+      order_id,
+      currency: "USD",
+      shipping_amount,
+      tax_amount,
+      total, // Affirm valida que sea EXACTO (subtotal+shipping+tax)
+    };
+
+    // Llamado real
+    const res = await fetch(`${API_BASE}/api/v2/checkout`, {
+      method: "POST",
+      headers: {
+        Authorization: "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ checkout }),
     });
 
     if (!res.ok) {
-      const txt = await res.text();
-      console.error('Affirm API error:', res.status, txt);
+      const detail = await res.text();
+      console.error("[AFFIRM checkout] status=", res.status, detail);
+      // devolvemos detalle para depurar rápido desde el navegador
       return {
         statusCode: res.status,
-        headers,
-        body: JSON.stringify({
-          error: 'Failed to create checkout',
-          details: res.status >= 500 ? 'Service temporarily unavailable' : 'Invalid request',
-        }),
+        headers: HDRS,
+        body: JSON.stringify({ error: "Affirm API error", status: res.status, detail }),
       };
     }
 
     const data = await res.json();
     return {
       statusCode: 200,
-      headers,
+      headers: HDRS,
       body: JSON.stringify({
         checkout_token: data.checkout_token,
-        redirect_url: data.redirect_url, // útil si querés redirigir en lugar de abrir modal
-        order_id: orderId,
+        redirect_url: data.redirect_url,
+        order_id,
       }),
     };
-  } catch (err) {
-    const message = err && typeof err === 'object' && 'message' in err ? err.message : String(err);
-    console.error('Checkout creation error:', message);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error', message }) };
+  } catch (e) {
+    console.error("[affirm-create-checkout] error", e);
+    return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Internal server error" }) };
   }
 };

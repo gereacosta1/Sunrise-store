@@ -77,8 +77,46 @@ exports.handler = async (event) => {
         // ✅ SOLO la PRIVATE key como usuario y password vacío:
         Authorization: "Basic " + Buffer.from(`${PRIV}:`).toString("base64"),
       },
-      body: JSON.stringify({ checkout }),
+      body: JSON.stringify({
+    checkout: {
+      merchant: {
+        user_confirmation_url: merchant.user_confirmation_url || `${SITE}/order-success`,
+        user_cancel_url:       merchant.user_cancel_url       || `${SITE}/order-cancel`,
+        user_confirmation_url_action: "GET",
+        name: merchant.name || "Sunrise Store",
+        // ✅ Enviar la public key que MATCH con la private (mismo merchant)
+        public_api_key: PUB,
+      },
+      shipping,
+      billing,
+      items: items.map(it => ({
+        display_name: it.display_name,
+        sku: it.sku,
+        unit_price: it.unit_price, // cents
+        qty: it.qty,
+        item_image_url: it.item_image_url,
+        item_url: it.item_url,
+      })),
+      discounts: {},
+      metadata: { platform: "sunrise-store", order_id: orderId },
+      order_id: orderId,
+      currency,
+      tax_amount: 0,
+      shipping_amount: 0,
+      total,
+    },
+  }),
+
+  
     });
+
+    console.log("[AFFIRM create]", {
+  env: ENV, api: API, site: SITE,
+  pub_len: (PUB || "").length,
+  priv_len: (PRIV || "").length,
+  pub_tail: PUB ? PUB.slice(-6) : null,     // último 6 chars
+  priv_tail: PRIV ? PRIV.slice(-6) : null,  // último 6 chars
+});
 
     const txt = await resp.text();
     if (!resp.ok) {

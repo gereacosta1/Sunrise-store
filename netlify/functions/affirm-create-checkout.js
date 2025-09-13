@@ -20,37 +20,36 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Items are required" }) };
 
     if (!Number.isInteger(total))
-      return {
-        statusCode: 400,
-        headers: HDRS,
-        body: JSON.stringify({ error: "Total must be integer cents" }),
-      };
+      return { statusCode: 400, headers: HDRS, body: JSON.stringify({ error: "Total must be integer cents" }) };
 
-    const ENV  = String(process.env.AFFIRM_ENV || "prod").toLowerCase();
+    const ENV  = String(process.env.AFFIRM_ENV || "production").toLowerCase();
     const API  = process.env.AFFIRM_API_BASE || (ENV.startsWith("prod") ? "https://api.affirm.com" : "https://sandbox.affirm.com");
     const SITE = process.env.AFFIRM_SITE_BASE_URL || "https://www.sunrisestore.info";
 
-    const PUB  = process.env.AFFIRM_PUBLIC_KEY;
-    const PRIV = process.env.AFFIRM_PRIVATE_KEY;
+    const PUB  = process.env.AFFIRM_PUBLIC_KEY;   // (opcional en payload)
+    const PRIV = process.env.AFFIRM_PRIVATE_KEY;  // 🔑 se usa sola en Authorization
 
-    // 👇 el bug estaba aquí: usar SITE (mayúsculas), no 'site'
-    console.log("[AFFIRM create]",
-      { env: ENV, api: API, pub_len: (PUB || "").length, priv_len: (PRIV || "").length, site: SITE }
-    );
+    console.log("[AFFIRM create]", {
+      env: ENV, api: API,
+      pub_len: (PUB || "").length,
+      priv_len: (PRIV || "").length,
+      site: SITE
+    });
 
-    if (!PUB || !PRIV) {
-      return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error" }) };
+    if (!PRIV) {
+      return { statusCode: 500, headers: HDRS, body: JSON.stringify({ error: "Server configuration error: missing AFFIRM_PRIVATE_KEY" }) };
     }
 
     const orderId = `SS-${Date.now()}`;
 
     const checkout = {
       merchant: {
-        // Si en el body vienen URLs de merchant, se respetan; si no, usamos SITE como fallback
         user_confirmation_url: merchant.user_confirmation_url || `${SITE}/order-success`,
-        user_cancel_url:       merchant.user_cancel_url       || `${SITE}/checkout-canceled`,
+        user_cancel_url:       merchant.user_cancel_url       || `${SITE}/order-cancel`,
         user_confirmation_url_action: "GET",
         name: merchant.name || "Sunrise Store",
+        // ⚠️ Dejar comentado hasta validar claves correctas:
+        // public_api_key: PUB
       },
       shipping,
       billing,
@@ -71,13 +70,14 @@ exports.handler = async (event) => {
       total, // cents
     };
 
-    const resp = await fetch(`${API}/api/v2/checkout/`, {
+    const resp = await fetch(`${API}/api/v2/checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + Buffer.from(`${PUB}:${PRIV}`).toString("base64"),
+        // ✅ SOLO la PRIVATE key como usuario y password vacío:
+        Authorization: "Basic " + Buffer.from(`${PRIV}:`).toString("base64"),
       },
-      body: JSON.stringify({ checkout }), // 👈 Affirm requiere { checkout: ... }
+      body: JSON.stringify({ checkout }),
     });
 
     const txt = await resp.text();
